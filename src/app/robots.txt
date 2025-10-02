@@ -1,0 +1,11 @@
+// src/app/robots.ts
+export default function robots() {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/api/', '/_next/'],
+    },
+    sitemap: 'https://metabolismsupport.com/sitemap.xml', // 🔁 REPLACE WITH YOUR LIVE DOMAIN
+  };
+}
