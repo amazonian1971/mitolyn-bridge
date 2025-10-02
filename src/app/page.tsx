@@ -78,7 +78,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* D. GUARANTEE BADGE (ONLY IF VENDOR OFFERS IT) */}
+          {/* D. GUARANTEE BADGE */}
           <div className="flex justify-center">
             <div className="bg-green-50 border border-green-200 rounded-full px-4 py-2 flex items-center gap-2">
               <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,16 +90,15 @@ export default function Home() {
             </div>
           </div>
 
-          {/* B. SOFT URGENCY (ONLY IF TRUE) */}
+          {/* B. SOFT URGENCY */}
           <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r text-amber-800 text-sm">
             <p>Popular item — check official site for current availability.</p>
           </div>
 
-          {/* E. COMPLIANT TESTIMONIALS (NO WEIGHT, NO FAKE PHOTOS) */}
+          {/* E. COMPLIANT TESTIMONIAL */}
           <div className="my-6">
             <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-4">
               <div className="flex items-center gap-3 mb-2">
-                {/* Generic avatar (no real person) */}
                 <div className="w-10 h-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
                   J
                 </div>
@@ -113,15 +112,6 @@ export default function Home() {
               </p>
             </div>
           </div>
-
-          {/* C. LIFESTYLE VISUAL (NO BEFORE/AFTER) — Optional: add an image below if you have one */}
-          {/* <div className="my-4">
-            <img 
-              src="/wellness-lifestyle.jpg" 
-              alt="Woman enjoying morning routine with supplement" 
-              className="rounded-xl shadow-sm w-full"
-            />
-          </div> */}
 
           <div className="mt-6">
             <button
@@ -142,10 +132,9 @@ export default function Home() {
           <div className="mt-6 text-xs text-gray-500 space-y-1">
             <p>🔒 Secure sign-in with Google</p>
             <p>✉️ By continuing, you agree to receive wellness updates. Unsubscribe anytime.</p>
-            <p>
-             <a href="/privacy" className="underline hover:text-blue-600">Privacy Policy</a>
+            <p className="flex justify-center gap-4">
+              <a href="/privacy" className="underline hover:text-blue-600">Privacy Policy</a>
               <a href="/disclaimer" className="underline hover:text-blue-600">Affiliate Disclaimer</a>
-              </a>
             </p>
           </div>
         </div>
