@@ -69,6 +69,15 @@ export default function Home() {
         }),
       });
 
+      // 🔥 FIRE GOOGLE ADS CONVERSION EVENT HERE
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-968379698",
+          value: 300.0,
+          currency: "INR",
+        });
+      }
+
       setTimeout(() => {
         window.location.href = process.env.NEXT_PUBLIC_AFFILIATE_LINK!;
       }, 1500);
