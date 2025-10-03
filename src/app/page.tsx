@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 
-// Simple SVG icons (no external deps)
+// Simple SVG icons
 const CheckIcon = () => (
   <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -93,12 +93,15 @@ export default function Home() {
             <p className="text-right text-sm text-blue-700 font-medium mt-2">— Sarah, Verified User</p>
           </div>
 
-          {/* Headline */}
+          {/* Headline + Keyword-Rich Subheadline */}
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
             Feel Like <span className="text-blue-600">Yourself Again</span> — Naturally
           </h1>
+          <p className="text-gray-600 text-lg mt-2">
+            The trusted choice for <strong>natural metabolism support</strong> after 40.
+          </p>
 
-          {/* ✅ LIFESTYLE IMAGE — Compliant & Magnetic */}
+          {/* Lifestyle Image */}
           <div className="my-6">
             <img 
               src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
@@ -108,21 +111,16 @@ export default function Home() {
             />
           </div>
 
-          {/* Subheadline */}
-          <p className="text-gray-600 text-lg">
-            Join thousands who’ve added daily metabolic support to their wellness routine.
-          </p>
-
-          {/* Benefit Stack */}
+          {/* Benefit Bullets with Keywords */}
           <ul className="grid grid-cols-1 gap-3 mt-6 text-left">
             <li className="flex items-start gap-2">
-              <CheckIcon /> <span className="text-gray-700">Support healthy metabolic function</span>
+              <CheckIcon /> <span>Support <strong>healthy metabolic function</strong> daily</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckIcon /> <span className="text-gray-700">Promote steady, natural energy levels</span>
+              <CheckIcon /> <span>Promote steady energy with a <strong>natural energy support supplement</strong></span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckIcon /> <span className="text-gray-700">Complement your balanced lifestyle</span>
+              <CheckIcon /> <span>Gentle, <strong>non-stimulant metabolism support</strong> for women</span>
             </li>
           </ul>
 
@@ -163,6 +161,32 @@ export default function Home() {
             </div>
             <div className="text-xs text-gray-600 flex items-center gap-1">
               <BadgeIcon /> Made in USA
+            </div>
+          </div>
+
+          {/* FAQ Section for SEO */}
+          <div className="mt-10 pt-6 border-t border-gray-200 space-y-4 text-left max-w-prose mx-auto">
+            <h3 className="font-bold text-gray-900 text-lg">Frequently Asked</h3>
+            
+            <div>
+              <p className="font-medium text-sm">What is the best metabolism booster for women over 40?</p>
+              <p className="text-gray-600 text-xs mt-1">
+                Many women choose natural, non-stimulant formulas that support healthy metabolic function as part of a balanced wellness routine.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-sm">Is this a natural metabolism support supplement?</p>
+              <p className="text-gray-600 text-xs mt-1">
+                Yes — it’s designed to complement your lifestyle with gentle, natural ingredients.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-medium text-sm">How does a natural energy support supplement work?</p>
+              <p className="text-gray-600 text-xs mt-1">
+                It helps nourish your body’s natural processes to promote steady, sustained energy throughout the day.
+              </p>
             </div>
           </div>
 
