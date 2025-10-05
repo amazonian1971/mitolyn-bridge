@@ -16,21 +16,37 @@ export default function Home() {
   const [showRedirecting, setShowRedirecting] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
+  // ✅ Capture UTM + Google Click IDs on page load
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      
+      const gclid = params.get('gclid');
+      const gbraid = params.get('gbraid');
+      const wbraid = params.get('wbraid');
+
+      if (gclid) localStorage.setItem('gclid', gclid);
+      if (gbraid) localStorage.setItem('gbraid', gbraid);
+      if (wbraid) localStorage.setItem('wbraid', wbraid);
+
+      const utm_source = params.get('utm_source');
+      const utm_medium = params.get('utm_medium');
+      const utm_campaign = params.get('utm_campaign');
+
+      if (utm_source) localStorage.setItem('utm_source', utm_source);
+      if (utm_medium) localStorage.setItem('utm_medium', utm_medium);
+      if (utm_campaign) localStorage.setItem('utm_campaign', utm_campaign);
+    }
+  }, []);
+
+  // Sticky CTA on scroll
   useEffect(() => {
     const handleScroll = () => setShowStickyBar(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      localStorage.setItem("utm_source", urlParams.get("utm_source") || "");
-      localStorage.setItem("utm_medium", urlParams.get("utm_medium") || "");
-      localStorage.setItem("utm_campaign", urlParams.get("utm_campaign") || "");
-    }
-  }, []);
-
+  // Auto-redirect on login
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
       handleLogLeadAndRedirect();
@@ -42,10 +58,15 @@ export default function Home() {
     setShowRedirecting(true);
 
     try {
+      // ✅ Retrieve all tracking IDs from localStorage
       const utm_source = localStorage.getItem("utm_source");
       const utm_medium = localStorage.getItem("utm_medium");
       const utm_campaign = localStorage.getItem("utm_campaign");
+      const gclid = localStorage.getItem("gclid");
+      const gbraid = localStorage.getItem("gbraid");
+      const wbraid = localStorage.getItem("wbraid");
 
+      // ✅ Send all IDs to your API
       await fetch("/api/log-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,9 +76,13 @@ export default function Home() {
           utm_source,
           utm_medium,
           utm_campaign,
+          gclid,
+          gbraid,
+          wbraid,
         }),
       });
 
+      // 🔥 Enhanced Conversions
       if (typeof window !== "undefined" && (window as any).gtag && session?.user?.email) {
         (window as any).gtag("event", "conversion", {
           send_to: "AW-968379698",
