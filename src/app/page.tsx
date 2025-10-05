@@ -10,21 +10,31 @@ const CheckIcon = () => (
   </svg>
 );
 
+const ChevronDownIcon = () => (
+  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
 export default function Home() {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [showRedirecting, setShowRedirecting] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // ✅ Capture UTM + Google Click IDs on page load
+  // Toggle FAQ
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
+  // ✅ Capture UTM + Click IDs
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      
       const gclid = params.get('gclid');
       const gbraid = params.get('gbraid');
       const wbraid = params.get('wbraid');
-
       if (gclid) localStorage.setItem('gclid', gclid);
       if (gbraid) localStorage.setItem('gbraid', gbraid);
       if (wbraid) localStorage.setItem('wbraid', wbraid);
@@ -32,14 +42,13 @@ export default function Home() {
       const utm_source = params.get('utm_source');
       const utm_medium = params.get('utm_medium');
       const utm_campaign = params.get('utm_campaign');
-
       if (utm_source) localStorage.setItem('utm_source', utm_source);
       if (utm_medium) localStorage.setItem('utm_medium', utm_medium);
       if (utm_campaign) localStorage.setItem('utm_campaign', utm_campaign);
     }
   }, []);
 
-  // Sticky CTA on scroll
+  // Sticky CTA
   useEffect(() => {
     const handleScroll = () => setShowStickyBar(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
@@ -58,7 +67,6 @@ export default function Home() {
     setShowRedirecting(true);
 
     try {
-      // ✅ Retrieve all tracking IDs from localStorage
       const utm_source = localStorage.getItem("utm_source");
       const utm_medium = localStorage.getItem("utm_medium");
       const utm_campaign = localStorage.getItem("utm_campaign");
@@ -66,7 +74,6 @@ export default function Home() {
       const gbraid = localStorage.getItem("gbraid");
       const wbraid = localStorage.getItem("wbraid");
 
-      // ✅ Send all IDs to your API
       await fetch("/api/log-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -82,7 +89,6 @@ export default function Home() {
         }),
       });
 
-      // 🔥 Enhanced Conversions
       if (typeof window !== "undefined" && (window as any).gtag && session?.user?.email) {
         (window as any).gtag("event", "conversion", {
           send_to: "AW-968379698",
@@ -100,6 +106,50 @@ export default function Home() {
       window.location.href = process.env.NEXT_PUBLIC_AFFILIATE_LINK!;
     }
   };
+
+  // ✅ 10 Compliant FAQs
+  const faqs = [
+    {
+      question: "Is this safe for women over 40?",
+      answer: "Yes — it’s formulated with gentle, natural ingredients. Always consult your physician before starting any new supplement."
+    },
+    {
+      question: "Do I need to follow a special diet?",
+      answer: "No. It’s designed to complement your balanced lifestyle, not replace healthy habits."
+    },
+    {
+      question: "How long before I notice a difference?",
+      answer: "Many users report feeling more energized within a few weeks of consistent use as part of their daily routine."
+    },
+    {
+      question: "Is this a weight loss product?",
+      answer: "No. This is a dietary supplement that supports healthy metabolic function and natural energy levels."
+    },
+    {
+      question: "What’s in the formula?",
+      answer: "It contains natural ingredients like green tea extract, B vitamins, and other compounds that support metabolic wellness."
+    },
+    {
+      question: "Is it non-stimulant?",
+      answer: "Yes — it’s formulated without caffeine or jitters-inducing stimulants."
+    },
+    {
+      question: "Where is it made?",
+      answer: "It’s proudly made in an FDA-registered, GMP-certified facility in the USA."
+    },
+    {
+      question: "Is there a guarantee?",
+      answer: "Yes — it comes with a 60-day satisfaction guarantee. If you’re not happy, contact the manufacturer for a refund."
+    },
+    {
+      question: "Can I take it with medications?",
+      answer: "If you’re taking prescription medications, please consult your healthcare provider before use."
+    },
+    {
+      question: "How do I take it?",
+      answer: "Take one capsule daily with water, preferably in the morning as part of your wellness routine."
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex flex-col">
@@ -162,9 +212,25 @@ export default function Home() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 rounded-full"></span> Made in USA</span>
           </div>
 
-          <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 text-left max-w-prose mx-auto text-sm">
-            <div><strong>Is this safe for women over 40?</strong><br /><span className="text-gray-600">Yes — always consult your physician before starting any supplement.</span></div>
-            <div><strong>Do I need to diet or exercise?</strong><br /><span className="text-gray-600">It’s designed to complement your balanced lifestyle.</span></div>
+          {/* ✅ FAQ Accordion */}
+          <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 max-w-prose mx-auto text-left">
+            <h3 className="font-bold text-gray-900 text-lg text-center">Frequently Asked Questions</h3>
+            {faqs.map((faq, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  className="w-full flex justify-between items-center p-4 text-left bg-white hover:bg-gray-50 font-medium"
+                  onClick={() => toggleFaq(index)}
+                >
+                  <span className="text-sm">{faq.question}</span>
+                  <ChevronDownIcon />
+                </button>
+                {openFaq === index && (
+                  <div className="p-4 bg-gray-50 text-xs text-gray-600 border-t border-gray-200">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
           <div className="mt-8 text-xs text-gray-500 space-y-2">
@@ -181,31 +247,4 @@ export default function Home() {
       {showStickyBar && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
           <div className="max-w-md mx-auto flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Ready to start?</span>
-            <button
-              onClick={() => signIn("google")}
-              disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition"
-            >
-              Continue →
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showRedirecting && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 text-center shadow-xl max-w-sm mx-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-3"></div>
-            <p className="font-bold text-gray-900">Loading Details...</p>
-            <p className="text-gray-600 text-sm mt-1">Redirecting to official site.</p>
-          </div>
-        </div>
-      )}
-
-      <footer className="py-4 text-center text-xs text-gray-500 border-t border-gray-100">
-        *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary.
-      </footer>
-    </div>
-  );
-}
+            <span className="
