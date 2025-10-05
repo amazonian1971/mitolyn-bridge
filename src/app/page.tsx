@@ -10,9 +10,14 @@ const CheckIcon = () => (
   </svg>
 );
 
-const ChevronDownIcon = () => (
-  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+const PlusIcon = ({ isOpen }: { isOpen: boolean }) => (
+  <svg 
+    className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-45' : ''}`} 
+    fill="none" 
+    stroke="currentColor" 
+    viewBox="0 0 24 24"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
   </svg>
 );
 
@@ -163,6 +168,7 @@ export default function Home() {
             <p className="text-right text-sm text-blue-700 font-medium mt-2">— Sarah, Verified User</p>
           </div>
 
+          {/* ✅ PERFECTLY CENTERED */}
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 whitespace-nowrap mx-auto text-center">
             Feel Like Yourself Again — Naturally
           </h1>
@@ -172,7 +178,7 @@ export default function Home() {
 
           <div className="my-6">
             <img 
-              src="https://cdn.pixabay.com/photo/2010/12/13/10/12/belly-2473_1280.jpg" 
+              src="https://images.stockcake.com/public/2/0/3/2036d68e-9c45-4730-921a-b9b8a3791638_large/sipping-red-smoothie-stockcake.jpg" 
               alt="Woman enjoying morning wellness routine with natural metabolic support" 
               className="rounded-2xl shadow-sm w-full"
               loading="lazy"
@@ -210,6 +216,7 @@ export default function Home() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 rounded-full"></span> Made in USA</span>
           </div>
 
+          {/* ✅ FAQ with + sign effect */}
           <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 max-w-prose mx-auto text-left">
             <h3 className="font-bold text-gray-900 text-lg text-center">Frequently Asked Questions</h3>
             {faqs.map((faq, index) => (
@@ -219,7 +226,7 @@ export default function Home() {
                   onClick={() => toggleFaq(index)}
                 >
                   <span className="text-sm">{faq.question}</span>
-                  <ChevronDownIcon />
+                  <PlusIcon isOpen={openFaq === index} />
                 </button>
                 {openFaq === index && (
                   <div className="p-4 bg-gray-50 text-xs text-gray-600 border-t border-gray-200">
@@ -241,7 +248,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ✅ Sticky CTA Bar - FIXED */}
+      {/* Sticky CTA Bar */}
       {showStickyBar && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
           <div className="max-w-md mx-auto flex items-center justify-between">
@@ -268,7 +275,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer */}
       <footer className="py-4 text-center text-xs text-gray-500 border-t border-gray-100">
         *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary.
       </footer>
