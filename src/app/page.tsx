@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 
 const CheckIcon = () => (
-  <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
   </svg>
 );
@@ -27,6 +27,44 @@ export default function Home() {
   const [showRedirecting, setShowRedirecting] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // 🔄 Rotating Testimonials
+  const testimonials = [
+    {
+      text: "Mitolyn gave me steady energy throughout the day without any jitters. After three weeks, my afternoon crashes disappeared, and I felt more like myself again.",
+      author: "Sarah, Verified User",
+      avatar: "https://via.placeholder.com/50?text=S"
+    },
+    {
+      text: "I was skeptical at first, but after 4 weeks, I noticed I had more stamina for my morning walks — no crash, no guilt, just natural support.",
+      author: "Jamie R., Portland, OR",
+      avatar: "https://via.placeholder.com/50?text=J"
+    },
+    {
+      text: "As a busy mom over 40, I needed something simple. Mitolyn fits into my routine — no diet, no stress, just consistent energy.",
+      author: "Lisa M., Texas",
+      avatar: "https://via.placeholder.com/50?text=L"
+    },
+    {
+      text: "My wellness coach recommended this. Now I start my day with focus — not fatigue. Gentle, effective, and non-stimulant.",
+      author: "Rachel K., Illinois",
+      avatar: "https://via.placeholder.com/50?text=R"
+    },
+    {
+      text: "No more 3 PM slump. Mitolyn helps me power through my workday without coffee or sugar crashes.",
+      author: "Tina P., California",
+      avatar: "https://via.placeholder.com/50?text=T"
+    }
+  ];
+
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000); // Rotate every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -152,119 +190,136 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex flex-col">
-      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8">
-        <div className="max-w-md w-full space-y-8 text-center">
-          
-          <div className="mb-6 text-left max-w-prose mx-auto bg-blue-50 p-4 rounded-xl border border-blue-100">
-            <p className="text-gray-800 italic text-base leading-relaxed">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50 flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center py-10 px-4 sm:px-6">
+        <div className="max-w-3xl w-full space-y-12">
+
+          {/* Story Hook - Modern Card */}
+          <div className="text-left bg-gradient-to-br from-teal-50 to-cyan-50 p-6 rounded-2xl border border-teal-100 shadow-sm">
+            <p className="text-gray-800 italic text-lg leading-relaxed">
               “After 40, my energy vanished — no matter how ‘healthy’ I ate. 
               My wellness coach said my metabolism needed gentle support. 
               That small shift changed everything.”
             </p>
-            <p className="text-right text-sm text-blue-700 font-medium mt-2">— Sarah, Verified User</p>
+            <p className="text-right text-teal-700 font-medium mt-3">— Sarah, Verified User</p>
           </div>
 
-          {/* ✅ PERFECTLY CENTERED HEADLINE */}
-          <div className="w-full flex flex-col items-center justify-center mb-4">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 whitespace-nowrap text-center">
+          {/* Headline - Vibrant & Centered */}
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-700 to-cyan-800 bg-clip-text text-transparent">
               Feel Like Yourself Again — Naturally
             </h1>
-            <p className="text-gray-600 text-lg mt-2 text-center max-w-prose">
+            <p className="text-gray-600 text-xl mt-4 max-w-2xl mx-auto">
               The trusted choice for <strong>natural metabolism support</strong> after 40.
             </p>
           </div>
 
-          <div className="my-6">
+          {/* Rotating Testimonial */}
+          <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-sm">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                <span className="text-teal-700 font-bold">❝</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-gray-800 italic text-lg">
+                  {testimonials[currentTestimonial].text}
+                </p>
+                <p className="text-right text-teal-700 font-medium mt-2">
+                  — {testimonials[currentTestimonial].author}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Lifestyle Image */}
+          <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100">
             <img 
-              src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+              src="https://images.stockcake.com/public/2/0/3/2036d68e-9c45-4730-921a-b9b8a3791638_large/sipping-red-smoothie-stockcake.jpg" 
               alt="Woman enjoying morning wellness routine with natural metabolic support" 
-              className="rounded-2xl shadow-sm w-full"
+              className="w-full h-auto"
               loading="lazy"
             />
           </div>
 
           {/* ✅ COMPLIANT PRODUCT HIGHLIGHT BLOCK */}
-          <div className="mt-6 p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-start gap-3 mb-4">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 font-bold">❝</span>
+          <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-sm">
+            <div className="flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                <span className="text-teal-700 font-bold">❝</span>
               </div>
-              <p className="text-gray-800 italic text-sm sm:text-base">
+              <p className="text-gray-800 italic text-lg">
                 “Mitolyn gave me steady energy throughout the day without any jitters. After three weeks, my afternoon crashes disappeared, and I felt more like myself again.”
               </p>
             </div>
 
-            <h3 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
-              <span>✨</span> Why Women Are Choosing Mitolyn
+            <h3 className="font-bold text-xl text-gray-900 mb-4 flex items-center gap-2">
+              <span className="text-teal-600">✨</span> Why Women Are Choosing Mitolyn
             </h3>
 
-            <ul className="space-y-2 text-sm text-gray-700 mb-4">
-              <li className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">✓</span>
+            <ul className="space-y-3 text-gray-700 mb-5">
+              <li className="flex items-start gap-3">
+                <CheckIcon />
                 <span>Supports mitochondrial health for natural, sustained energy</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">✓</span>
+              <li className="flex items-start gap-3">
+                <CheckIcon />
                 <span>Stimulant-free formula — no crashes, no jitters</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">✓</span>
+              <li className="flex items-start gap-3">
+                <CheckIcon />
                 <span>Complements your wellness lifestyle without harsh side effects</span>
               </li>
             </ul>
 
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-              <p className="text-blue-800 font-medium text-sm">
+            <div className="bg-teal-50 p-4 rounded-xl border border-teal-100">
+              <p className="text-teal-800 font-medium">
                 💡 <strong>Final Thought:</strong> Your metabolism deserves gentle, science-backed support. Mitolyn is designed for those seeking a clean, non-habit-forming way to promote metabolic balance and daily wellness.
               </p>
             </div>
           </div>
 
-          <div className="mt-8 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
-            <h3 className="font-bold text-indigo-900 text-lg mb-3">Why Women Over 40 Choose This</h3>
-            <ul className="space-y-2 text-left">
+          {/* USP Section */}
+          <div className="p-5 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl border border-cyan-100">
+            <h3 className="font-bold text-lg text-cyan-900 mb-3 text-center">Why Women Over 40 Choose This</h3>
+            <ul className="space-y-2 text-left max-w-md mx-auto">
               <li className="flex items-start gap-2"><CheckIcon /> Supports healthy metabolic function</li>
               <li className="flex items-start gap-2"><CheckIcon /> Promotes steady, natural energy</li>
               <li className="flex items-start gap-2"><CheckIcon /> Gentle, non-stimulant formula</li>
             </ul>
           </div>
 
-          <div className="mt-8">
+          {/* CTA Button - Vibrant */}
+          <div className="text-center">
             <button
               onClick={() => signIn("google")}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-md text-white font-bold text-lg disabled:opacity-70 hover:from-blue-700 hover:to-indigo-800 transition-all"
+              className="w-full max-w-xs mx-auto px-6 py-4 bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600 rounded-xl shadow-lg hover:shadow-xl text-white font-bold text-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-70"
             >
-              <svg className="w-6 h-6" viewBox="0 0 24 24">
-                <path fill="#FFFFFF" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#FFFFFF" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FFFFFF" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#FFFFFF" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
               Start My Wellness Journey →
             </button>
           </div>
 
-          <div className="flex justify-center gap-4 mt-4 flex-wrap text-xs text-gray-600">
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full"></span> SSL Secured</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-500 rounded-full"></span> Free Shipping</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 rounded-full"></span> Made in USA</span>
+          {/* Trust Badges */}
+          <div className="flex justify-center gap-6 mt-4 flex-wrap text-sm text-gray-600">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-teal-500 rounded-full"></span> SSL Secured</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-orange-500 rounded-full"></span> Free Shipping</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-cyan-500 rounded-full"></span> Made in USA</span>
           </div>
 
-          <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 max-w-prose mx-auto text-left">
-            <h3 className="font-bold text-gray-900 text-lg text-center">Frequently Asked Questions</h3>
+          {/* FAQ */}
+          <div className="pt-8 border-t border-gray-200">
+            <h3 className="font-bold text-xl text-gray-900 text-center mb-6">Frequently Asked Questions</h3>
             {faqs.map((faq, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+              <div key={index} className="border border-gray-200 rounded-xl overflow-hidden mb-3">
                 <button
                   className="w-full flex justify-between items-center p-4 text-left bg-white hover:bg-gray-50 font-medium"
                   onClick={() => toggleFaq(index)}
                 >
-                  <span className="text-sm">{faq.question}</span>
+                  <span className="text-gray-800">{faq.question}</span>
                   <PlusIcon isOpen={openFaq === index} />
                 </button>
                 {openFaq === index && (
-                  <div className="p-4 bg-gray-50 text-xs text-gray-600 border-t border-gray-200">
+                  <div className="p-4 bg-gray-50 text-gray-600 border-t border-gray-200">
                     {faq.answer}
                   </div>
                 )}
@@ -272,25 +327,27 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="mt-8 text-xs text-gray-500 space-y-2">
+          {/* Footer Links */}
+          <div className="text-center text-xs text-gray-500 space-y-3 pt-6">
             <p>🔒 Secure sign-in with Google</p>
             <p>✉️ By continuing, you agree to receive wellness updates. Unsubscribe anytime.</p>
-            <p className="flex justify-center gap-4">
-              <a href="/privacy" className="underline hover:text-blue-600">Privacy Policy</a>
-              <a href="/disclaimer" className="underline hover:text-blue-600">Affiliate Disclaimer</a>
+            <p className="flex justify-center gap-6">
+              <a href="/privacy" className="underline hover:text-teal-600">Privacy Policy</a>
+              <a href="/disclaimer" className="underline hover:text-teal-600">Affiliate Disclaimer</a>
             </p>
           </div>
         </div>
       </div>
 
+      {/* Sticky CTA */}
       {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
-          <div className="max-w-md mx-auto flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Ready to start?</span>
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-40">
+          <div className="max-w-3xl mx-auto flex items-center justify-between">
+            <span className="text-gray-700 font-medium">Ready to start?</span>
             <button
               onClick={() => signIn("google")}
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition"
+              className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-amber-600 transition"
             >
               Continue →
             </button>
@@ -298,17 +355,18 @@ export default function Home() {
         </div>
       )}
 
+      {/* Redirect Modal */}
       {showRedirecting && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 text-center shadow-xl max-w-sm mx-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-3"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-3"></div>
             <p className="font-bold text-gray-900">Loading Details...</p>
             <p className="text-gray-600 text-sm mt-1">Redirecting to official site.</p>
           </div>
         </div>
       )}
 
-      <footer className="py-4 text-center text-xs text-gray-500 border-t border-gray-100">
+      <footer className="py-5 text-center text-xs text-gray-500 border-t border-gray-100">
         *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary.
       </footer>
     </div>
