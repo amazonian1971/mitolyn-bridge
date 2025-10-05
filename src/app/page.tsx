@@ -32,7 +32,6 @@ export default function Home() {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  // ✅ Capture UTM + Click IDs
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -52,14 +51,12 @@ export default function Home() {
     }
   }, []);
 
-  // Sticky CTA
   useEffect(() => {
     const handleScroll = () => setShowStickyBar(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Auto-redirect on login
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
       handleLogLeadAndRedirect();
@@ -168,17 +165,19 @@ export default function Home() {
             <p className="text-right text-sm text-blue-700 font-medium mt-2">— Sarah, Verified User</p>
           </div>
 
-          {/* ✅ PERFECTLY CENTERED */}
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 whitespace-nowrap mx-auto text-center">
-            Feel Like Yourself Again — Naturally
-          </h1>
-          <p className="text-gray-600 text-lg mt-2 mx-auto text-center max-w-prose">
-            The trusted choice for <strong>natural metabolism support</strong> after 40.
-          </p>
+          {/* ✅ PERFECTLY CENTERED HEADLINE */}
+          <div className="w-full flex flex-col items-center justify-center mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 whitespace-nowrap text-center">
+              Feel Like Yourself Again — Naturally
+            </h1>
+            <p className="text-gray-600 text-lg mt-2 text-center max-w-prose">
+              The trusted choice for <strong>natural metabolism support</strong> after 40.
+            </p>
+          </div>
 
           <div className="my-6">
             <img 
-              src="https://images.stockcake.com/public/2/0/3/2036d68e-9c45-4730-921a-b9b8a3791638_large/sipping-red-smoothie-stockcake.jpg" 
+              src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
               alt="Woman enjoying morning wellness routine with natural metabolic support" 
               className="rounded-2xl shadow-sm w-full"
               loading="lazy"
@@ -216,7 +215,6 @@ export default function Home() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 rounded-full"></span> Made in USA</span>
           </div>
 
-          {/* ✅ FAQ with + sign effect */}
           <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 max-w-prose mx-auto text-left">
             <h3 className="font-bold text-gray-900 text-lg text-center">Frequently Asked Questions</h3>
             {faqs.map((faq, index) => (
@@ -248,7 +246,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Sticky CTA Bar */}
       {showStickyBar && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
           <div className="max-w-md mx-auto flex items-center justify-between">
@@ -264,7 +261,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Redirect Modal */}
       {showRedirecting && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 text-center shadow-xl max-w-sm mx-4">
