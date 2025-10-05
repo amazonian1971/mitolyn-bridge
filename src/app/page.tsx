@@ -177,7 +177,8 @@ export default function Home() {
 
           <div className="my-6">
             <img 
-              src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+              src="https://images.stockcake.com/public/2/0/3/2036d68e-9c45-4730-921a-b9b8a3791638_large/sipping-red-smoothie-stockcake.jpg
+" 
               alt="Woman enjoying morning wellness routine with natural metabolic support" 
               className="rounded-2xl shadow-sm w-full"
               loading="lazy"
