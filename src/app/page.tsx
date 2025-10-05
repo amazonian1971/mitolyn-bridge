@@ -1,30 +1,12 @@
+// src/app/page.tsx
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { signIn, useSession } from "next-auth/react";
 
-// Simple SVG icons
 const CheckIcon = () => (
   <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-  </svg>
-);
-
-const ShieldIcon = () => (
-  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-  </svg>
-);
-
-const TruckIcon = () => (
-  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-  </svg>
-);
-
-const BadgeIcon = () => (
-  <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
@@ -32,6 +14,13 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [showRedirecting, setShowRedirecting] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowStickyBar(window.scrollY > 300);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -69,12 +58,12 @@ export default function Home() {
         }),
       });
 
-      // 🔥 FIRE GOOGLE ADS CONVERSION EVENT HERE
-      if (typeof window !== "undefined" && (window as any).gtag) {
+      if (typeof window !== "undefined" && (window as any).gtag && session?.user?.email) {
         (window as any).gtag("event", "conversion", {
           send_to: "AW-968379698",
-          value: 300.0,
+          value: 75.0,
           currency: "INR",
+          email: session.user.email,
         });
       }
 
@@ -92,7 +81,6 @@ export default function Home() {
       <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8">
         <div className="max-w-md w-full space-y-8 text-center">
           
-          {/* Story Hook */}
           <div className="mb-6 text-left max-w-prose mx-auto bg-blue-50 p-4 rounded-xl border border-blue-100">
             <p className="text-gray-800 italic text-base leading-relaxed">
               “After 40, my energy vanished — no matter how ‘healthy’ I ate. 
@@ -102,53 +90,36 @@ export default function Home() {
             <p className="text-right text-sm text-blue-700 font-medium mt-2">— Sarah, Verified User</p>
           </div>
 
-          {/* Headline + Keyword-Rich Subheadline */}
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
-            Feel Like <span className="text-blue-600">Yourself Again</span> — Naturally
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 whitespace-nowrap mx-auto text-center">
+            Feel Like Yourself Again — Naturally
           </h1>
-          <p className="text-gray-600 text-lg mt-2">
+          <p className="text-gray-600 text-lg mt-2 mx-auto text-center max-w-prose">
             The trusted choice for <strong>natural metabolism support</strong> after 40.
           </p>
 
-          {/* Lifestyle Image */}
           <div className="my-6">
             <img 
               src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-              alt="Woman smiling while enjoying a peaceful morning with natural wellness support" 
+              alt="Woman enjoying morning wellness routine with natural metabolic support" 
               className="rounded-2xl shadow-sm w-full"
               loading="lazy"
             />
           </div>
 
-          {/* Benefit Bullets with Keywords */}
-          <ul className="grid grid-cols-1 gap-3 mt-6 text-left">
-            <li className="flex items-start gap-2">
-              <CheckIcon /> <span>Support <strong>healthy metabolic function</strong> daily</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckIcon /> <span>Promote steady energy with a <strong>natural energy support supplement</strong></span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckIcon /> <span>Gentle, <strong>non-stimulant metabolism support</strong> for women</span>
-            </li>
-          </ul>
-
-          {/* Guarantee Badge */}
-          <div className="flex justify-center mt-6">
-            <div className="bg-green-50 border border-green-200 rounded-full px-4 py-2 flex items-center gap-2">
-              <BadgeIcon />
-              <span className="text-green-800 font-medium text-sm">
-                60-Day Satisfaction Guarantee*
-              </span>
-            </div>
+          <div className="mt-8 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
+            <h3 className="font-bold text-indigo-900 text-lg mb-3">Why Women Over 40 Choose This</h3>
+            <ul className="space-y-2 text-left">
+              <li className="flex items-start gap-2"><CheckIcon /> Supports healthy metabolic function</li>
+              <li className="flex items-start gap-2"><CheckIcon /> Promotes steady, natural energy</li>
+              <li className="flex items-start gap-2"><CheckIcon /> Gentle, non-stimulant formula</li>
+            </ul>
           </div>
 
-          {/* CTA Button */}
           <div className="mt-8">
             <button
               onClick={() => signIn("google")}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-white font-bold text-lg disabled:opacity-70 hover:from-blue-700 hover:to-indigo-800"
+              className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-md text-white font-bold text-lg disabled:opacity-70 hover:from-blue-700 hover:to-indigo-800 transition-all"
             >
               <svg className="w-6 h-6" viewBox="0 0 24 24">
                 <path fill="#FFFFFF" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -160,46 +131,17 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Trust Badges */}
-          <div className="flex justify-center gap-4 mt-4 flex-wrap">
-            <div className="text-xs text-gray-600 flex items-center gap-1">
-              <ShieldIcon /> SSL Secured
-            </div>
-            <div className="text-xs text-gray-600 flex items-center gap-1">
-              <TruckIcon /> Free Shipping
-            </div>
-            <div className="text-xs text-gray-600 flex items-center gap-1">
-              <BadgeIcon /> Made in USA
-            </div>
+          <div className="flex justify-center gap-4 mt-4 flex-wrap text-xs text-gray-600">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full"></span> SSL Secured</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-blue-500 rounded-full"></span> Free Shipping</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 rounded-full"></span> Made in USA</span>
           </div>
 
-          {/* FAQ Section for SEO */}
-          <div className="mt-10 pt-6 border-t border-gray-200 space-y-4 text-left max-w-prose mx-auto">
-            <h3 className="font-bold text-gray-900 text-lg">Frequently Asked</h3>
-            
-            <div>
-              <p className="font-medium text-sm">What is the best metabolism booster for women over 40?</p>
-              <p className="text-gray-600 text-xs mt-1">
-                Many women choose natural, non-stimulant formulas that support healthy metabolic function as part of a balanced wellness routine.
-              </p>
-            </div>
-
-            <div>
-              <p className="font-medium text-sm">Is this a natural metabolism support supplement?</p>
-              <p className="text-gray-600 text-xs mt-1">
-                Yes — it’s designed to complement your lifestyle with gentle, natural ingredients.
-              </p>
-            </div>
-
-            <div>
-              <p className="font-medium text-sm">How does a natural energy support supplement work?</p>
-              <p className="text-gray-600 text-xs mt-1">
-                It helps nourish your body’s natural processes to promote steady, sustained energy throughout the day.
-              </p>
-            </div>
+          <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 text-left max-w-prose mx-auto text-sm">
+            <div><strong>Is this safe for women over 40?</strong><br /><span className="text-gray-600">Yes — always consult your physician before starting any supplement.</span></div>
+            <div><strong>Do I need to diet or exercise?</strong><br /><span className="text-gray-600">It’s designed to complement your balanced lifestyle.</span></div>
           </div>
 
-          {/* Footer Links */}
           <div className="mt-8 text-xs text-gray-500 space-y-2">
             <p>🔒 Secure sign-in with Google</p>
             <p>✉️ By continuing, you agree to receive wellness updates. Unsubscribe anytime.</p>
@@ -211,21 +153,33 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Redirect Modal */}
-      {showRedirecting && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 text-center shadow-xl max-w-sm mx-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h3 className="text-xl font-bold text-gray-900">Loading Product Details...</h3>
-            <p className="mt-2 text-gray-600">Redirecting to official site.</p>
+      {showStickyBar && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
+          <div className="max-w-md mx-auto flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Ready to start?</span>
+            <button
+              onClick={() => signIn("google")}
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition"
+            >
+              Continue →
+            </button>
           </div>
         </div>
       )}
 
-      {/* Footer Disclaimer */}
+      {showRedirecting && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 text-center shadow-xl max-w-sm mx-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-3"></div>
+            <p className="font-bold text-gray-900">Loading Details...</p>
+            <p className="text-gray-600 text-sm mt-1">Redirecting to official site.</p>
+          </div>
+        </div>
+      )}
+
       <footer className="py-4 text-center text-xs text-gray-500 border-t border-gray-100">
-        *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease. 
-        Results may vary. The guarantee is provided by the manufacturer. Consult your physician before use.
+        *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary.
       </footer>
     </div>
   );

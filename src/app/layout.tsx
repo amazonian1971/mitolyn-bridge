@@ -1,8 +1,15 @@
 // src/app/layout.tsx
-'use client';
-
-import { SessionProvider } from "next-auth/react";
+import { Providers } from "./providers";
 import "./globals.css";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata = {
+  title: "Natural Metabolism Support for Women Over 40 | MetabolismSupport.com",
+  description: "Discover gentle, natural metabolic support to help you feel energized after 40. Non-stimulant, made in USA, 60-day guarantee.",
+  keywords: "natural metabolism support, metabolism booster for women, energy supplement after 40, non stimulant metabolism support, healthy metabolic function",
+};
 
 export default function RootLayout({
   children,
@@ -12,7 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* 🔥 Google Ads Global Site Tag */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+
+        {/* Google Ads Global Site Tag */}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-968379698"
@@ -28,8 +40,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
-        <SessionProvider>{children}</SessionProvider>
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
