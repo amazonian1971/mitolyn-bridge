@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 
 const CheckIcon = () => (
@@ -23,7 +23,6 @@ export default function Home() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Toggle FAQ
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
@@ -107,7 +106,6 @@ export default function Home() {
     }
   };
 
-  // ✅ 10 Compliant FAQs
   const faqs = [
     {
       question: "Is this safe for women over 40?",
@@ -174,7 +172,7 @@ export default function Home() {
 
           <div className="my-6">
             <img 
-              src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+              src="https://cdn.pixabay.com/photo/2010/12/13/10/12/belly-2473_1280.jpg" 
               alt="Woman enjoying morning wellness routine with natural metabolic support" 
               className="rounded-2xl shadow-sm w-full"
               loading="lazy"
@@ -212,7 +210,6 @@ export default function Home() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-500 rounded-full"></span> Made in USA</span>
           </div>
 
-          {/* ✅ FAQ Accordion */}
           <div className="mt-10 pt-6 border-t border-gray-200 space-y-3 max-w-prose mx-auto text-left">
             <h3 className="font-bold text-gray-900 text-lg text-center">Frequently Asked Questions</h3>
             {faqs.map((faq, index) => (
@@ -244,7 +241,37 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ✅ Sticky CTA Bar - FIXED */}
       {showStickyBar && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-lg z-40">
           <div className="max-w-md mx-auto flex items-center justify-between">
-            <span className="
+            <span className="text-sm font-medium text-gray-700">Ready to start?</span>
+            <button
+              onClick={() => signIn("google")}
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition"
+            >
+              Continue →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Redirect Modal */}
+      {showRedirecting && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 text-center shadow-xl max-w-sm mx-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-3"></div>
+            <p className="font-bold text-gray-900">Loading Details...</p>
+            <p className="text-gray-600 text-sm mt-1">Redirecting to official site.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="py-4 text-center text-xs text-gray-500 border-t border-gray-100">
+        *These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary.
+      </footer>
+    </div>
+  );
+}
