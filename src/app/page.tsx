@@ -177,12 +177,48 @@ export default function Home() {
 
           <div className="my-6">
             <img 
-              src="https://images.stockcake.com/public/2/0/3/2036d68e-9c45-4730-921a-b9b8a3791638_large/sipping-red-smoothie-stockcake.jpg
-" 
+              src="https://images.unsplash.com/photo-1506795660198-e95c77602129?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
               alt="Woman enjoying morning wellness routine with natural metabolic support" 
               className="rounded-2xl shadow-sm w-full"
               loading="lazy"
             />
+          </div>
+
+          {/* ✅ COMPLIANT PRODUCT HIGHLIGHT BLOCK */}
+          <div className="mt-6 p-5 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <span className="text-blue-600 font-bold">❝</span>
+              </div>
+              <p className="text-gray-800 italic text-sm sm:text-base">
+                “Mitolyn gave me steady energy throughout the day without any jitters. After three weeks, my afternoon crashes disappeared, and I felt more like myself again.”
+              </p>
+            </div>
+
+            <h3 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
+              <span>✨</span> Why Women Are Choosing Mitolyn
+            </h3>
+
+            <ul className="space-y-2 text-sm text-gray-700 mb-4">
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>Supports mitochondrial health for natural, sustained energy</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>Stimulant-free formula — no crashes, no jitters</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">✓</span>
+                <span>Complements your wellness lifestyle without harsh side effects</span>
+              </li>
+            </ul>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+              <p className="text-blue-800 font-medium text-sm">
+                💡 <strong>Final Thought:</strong> Your metabolism deserves gentle, science-backed support. Mitolyn is designed for those seeking a clean, non-habit-forming way to promote metabolic balance and daily wellness.
+              </p>
+            </div>
           </div>
 
           <div className="mt-8 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
