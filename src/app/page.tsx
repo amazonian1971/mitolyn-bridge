@@ -115,7 +115,7 @@ export default function Home() {
       if (typeof window !== "undefined" && (window as any).gtag && session?.user?.email) {
         (window as any).gtag("event", "conversion", { send_to: "AW-968379698", value: 75.0, currency: "INR", email: session.user.email });
       }
-      setTimeout(() => { window.location.href = process.env.NEXT_PUBLIC_AFFILIATE_LINK!; }, 1500);
+      setTimeout(() => { window.location.href = process.env.NEXT_PUBLIC__AFFILIATE_LINK!; }, 1500);
     } catch (error) {
       console.error("Redirect failed:", error);
       window.location.href = process.env.NEXT_PUBLIC_AFFILIATE_LINK!;
@@ -144,15 +144,12 @@ export default function Home() {
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-20"></div>
         <div className="relative max-w-4xl mx-auto">
       
-          {/* --- CHANGE 2: NEW "EYEBROW" SUB-HEADLINE --- */}
           <p className="font-semibold text-emerald-700 mb-4 animate-in fade-in slide-in-from-top duration-500 uppercase tracking-wider">Gentle, Non-Stimulant Metabolic Support</p>
           
-          {/* --- CHANGE 1: NEW MAIN HEADLINE (H1) --- */}
           <h1 className={`font-serif text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-in fade-in slide-in-from-top duration-700 ${lora.className}`}>
             The Natural Metabolism Booster for Women Over 40
           </h1>
 
-          {/* --- CHANGE 3: NEW DESCRIPTION PARAGRAPH --- */}
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6 animate-in fade-in slide-in-from-top duration-900">
             Mitolyn is the breakthrough daily formula designed to promote steady energy and provide natural metabolic support for women over 40—without the jitters or afternoon crashes.
           </p>
