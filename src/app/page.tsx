@@ -144,14 +144,21 @@ export default function Home() {
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-20"></div>
         <div className="relative max-w-4xl mx-auto">
       
-          <p className="font-semibold text-emerald-700 mb-4 animate-in fade-in slide-in-from-top duration-500">Metabolism, Mastered. Energy That Evolves With You.</p>
+          {/* --- CHANGE 2: NEW "EYEBROW" SUB-HEADLINE --- */}
+          <p className="font-semibold text-emerald-700 mb-4 animate-in fade-in slide-in-from-top duration-500 uppercase tracking-wider">Gentle, Non-Stimulant Metabolic Support</p>
+          
+          {/* --- CHANGE 1: NEW MAIN HEADLINE (H1) --- */}
           <h1 className={`font-serif text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-in fade-in slide-in-from-top duration-700 ${lora.className}`}>
-            Tired of Feeling Tired? Reclaim Your Spark.
+            The Natural Metabolism Booster for Women Over 40
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 animate-in fade-in slide-in-from-top duration-900">
-            Mitolyn is the breakthrough morning ritual designed to support your metabolism and restore youthful energy, without the jitters or afternoon crashes.
+
+          {/* --- CHANGE 3: NEW DESCRIPTION PARAGRAPH --- */}
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6 animate-in fade-in slide-in-from-top duration-900">
+            Mitolyn is the breakthrough daily formula designed to promote steady energy and provide natural metabolic support for women over 40—without the jitters or afternoon crashes.
           </p>
           
+          <p className="font-semibold text-gray-700 max-w-2xl mx-auto mb-8 animate-in fade-in slide-in-from-top duration-900">To get secure, instant access to this exclusive presentation, sign in below:</p>
+
           <div className="animate-in fade-in slide-in-from-bottom duration-1000">
             <button
               onClick={() => signIn("google")}
@@ -159,16 +166,16 @@ export default function Home() {
               className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg hover:shadow-xl text-white font-bold text-lg transition-all transform hover:-translate-y-1 disabled:opacity-70 flex items-center justify-center space-x-3 w-full max-w-md mx-auto"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
-              <span>Watch The Free Video Presentation</span>
+              <span>Get Instant Access Now</span>
             </button>
             
-            {/* --- TRUST BADGES ADDED HERE --- */}
             <div className="flex justify-center gap-4 mt-4 flex-wrap text-xs text-gray-600">
               <span>🔒 SSL Secured</span>
               <span>🚚 Free Shipping</span>
-              <span>💯Made in USA</span>
+              <span>🇺🇸 Made in USA</span>
               <span>💯 60-Day Guarantee</span>
             </div>
+
             <div className="flex items-center justify-center space-x-6 mt-6 text-sm text-gray-500">
               <div className="flex items-center space-x-1.5">
                 <StarIcon /> <StarIcon /> <StarIcon /> <StarIcon /> <StarIcon /> <span>4.9/5 stars</span>
@@ -183,7 +190,7 @@ export default function Home() {
       {/* --- How It Works Section --- */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 text-center">
-            <h2 className={`font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4 ${lora.className}`}>A Simple Ritual for Lasting Energy</h2>
+            <h2 className={`font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4 ${lora.className}`}>How Mitolyn Supports Your Metabolism</h2>
             <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">Mitolyn works with your body's natural processes in three simple steps.</p>
             <div className="grid md:grid-cols-3 gap-8 md:gap-12">
                 <div className="flex flex-col items-center">
@@ -309,11 +316,10 @@ export default function Home() {
             <span>→</span>
           </button>
           
-          {/* --- TRUST BADGES REPLACED HERE --- */}
           <div className="flex justify-center gap-4 mt-6 flex-wrap text-sm text-emerald-200">
             <span>🔒 SSL Secured</span>
             <span>🚚 Free Shipping</span>
-            <span>💯Made in USA</span>
+            <span>🇺🇸 Made in USA</span>
             <span>💯 60-Day Guarantee</span>
           </div>
 
@@ -359,7 +365,7 @@ export default function Home() {
       {/* --- Redirect Modal (Preserved & Re-styled) --- */}
       {showRedirecting && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-300">
-          <div className="bg-white rounded-2xl p-8 text-center shadow-xl max-w-sm mx-4 animate-in zoom-in duration-300">
+          <div className="bg-white rounded-2xl p-8 text-center shadow-xl max-w-sm mx-auto animate-in zoom-in duration-300">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
             <h3 className={`font-serif text-xl font-bold text-gray-900 mb-2 ${lora.className}`}>Authentication Successful!</h3>
             <p className="text-gray-600">Securely redirecting you to the official offer page...</p>
