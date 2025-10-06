@@ -115,7 +115,7 @@ export default function Home() {
       if (typeof window !== "undefined" && (window as any).gtag && session?.user?.email) {
         (window as any).gtag("event", "conversion", { send_to: "AW-968379698", value: 75.0, currency: "INR", email: session.user.email });
       }
-      setTimeout(() => { window.location.href = process.env.NEXT_PUBLIC__AFFILIATE_LINK!; }, 1500);
+      setTimeout(() => { window.location.href = process.env.NEXT_PUBLIC_AFFILIATE_LINK || '/'; }, 1500);
     } catch (error) {
       console.error("Redirect failed:", error);
       window.location.href = process.env.NEXT_PUBLIC_AFFILIATE_LINK!;
