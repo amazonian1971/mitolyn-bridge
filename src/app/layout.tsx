@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Script from 'next/script'; // Import the Script component
+import Script from 'next/script';
+import Providers from './providers'; // Import the new Providers component
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -18,7 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* --- YOUR MICROSOFT CLARITY SCRIPT GOES HERE --- */}
         <Script
           id="microsoft-clarity"
           strategy="afterInteractive"
@@ -32,10 +32,12 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* --- END OF CLARITY SCRIPT --- */}
       </head>
       <body className={inter.className}>
-        {children}
+        {/* Wrap the children with the Providers component */}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
