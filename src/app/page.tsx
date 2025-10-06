@@ -214,7 +214,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="md:order-2">
             <img 
-              src="https://images.stockcake.com/public/2/0/3/2036d68e-9c45-4730-921a-b9b8a3791638_large/sipping-red-smoothie-stockcake.jpg" 
+              src="https://scontent.fbho3-5.fna.fbcdn.net/o1/v/t0/f2/m255/AQMh2g97ysYdYjoq59h1LsYhZQNfejq2cUEktTIgb6CAfe5WXbqnBEBJeX58vyMISLiRcFp3VGxsEoMmPuPoApZHzjqu_Vxyyxj-2PofTehZPQIkJ97RG1CRvTsEKTMd.jpeg?_nc_ht=scontent.fbho3-5.fna.fbcdn.net&_nc_gid=U1mhLdT-xbX_zHJi569Z2A&_nc_cat=104&_nc_oc=AdlwYhLqyCywzhJOvU0XQMTvqTRjOGJCwuuHuQoQnhP04NiiP-E4m4bPzYA1oh9CysI&ccb=9-4&oh=00_Afc-VpOWpifxpscPu7u7gemATYULkQCk_UvpBz1CQhh2jQ&oe=68E5E939&_nc_sid=5b3566" 
               alt="Woman feeling vibrant and energetic"
               className="rounded-2xl shadow-xl w-full h-auto object-cover"
             />
