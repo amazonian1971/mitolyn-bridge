@@ -371,7 +371,7 @@ export default function Home() {
           <div className="bg-white rounded-2xl p-8 text-center shadow-xl max-w-sm mx-auto animate-in zoom-in duration-300">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
             <h3 className={`font-serif text-xl font-bold text-gray-900 mb-2 ${lora.className}`}>Authentication Successful!</h3>
-            <p className="text-gray-600">Securely redirecting you to the official presentation...</p>
+            <p className="text-gray-600">Get ready to watch the exclusive video presentation. It will start playing automatically...</p>
           </div>
         </div>
       )}
