@@ -1,65 +1,62 @@
 // src/app/api/log-lead/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
 
-export async function POST(request: NextRequest) {
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+
+// Initialize Supabase client
+// Make sure these environment variables are set in Vercel!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("RECEIVED LEAD DATA:", body);
+    const { email, name, utm_source, utm_medium, utm_campaign, gclid, gbraid, wbraid } = body;
 
-    const {
-      email,
-      name,
-      utm_source,
-      utm_medium,
-      utm_campaign,
-      gclid,
-      gbraid,
-      wbraid,
-    } = body;
-
-    // Validate required field
+    // Validate that email is present
     if (!email) {
-      return NextResponse.json(
-        { success: false, error: "Email is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
+    // Prepare the data for Supabase
+    const leadData = {
+      email,
+      name: name || null,
+      utm_source: utm_source || null,
+      utm_medium: utm_medium || null,
+      utm_campaign: utm_campaign || null,
+      gclid: gclid || null,
+      gbraid: gbraid || null,
+      wbraid: wbraid || null,
+    };
+
+    // Insert data into your 'leads' table in Supabase
+    // IMPORTANT: Make sure your table in Supabase is named 'leads'
     const { data, error } = await supabase
-      .from("leads")
-      .insert([
-        {
-          email,
-          name,
-          utm_source: utm_source || null,
-          utm_medium: utm_medium || null,
-          utm_campaign: utm_campaign || null,
-          gclid: gclid || null,
-          gbraid: gbraid || null,
-          wbraid: wbraid || null,
-          ip_address: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
-          user_agent: request.headers.get("user-agent") || null,
-          created_at: new Date().toISOString(),
-        },
-      ])
+      .from('leads')
+      .insert([leadData])
       .select();
 
     if (error) {
-      console.error("SUPABASE INSERT FAILED:", error);
-      return NextResponse.json(
-        { success: false, error: "Database error" },
-        { status: 500 }
-      );
+      console.error('Supabase error:', error);
+      // Throw the error to be caught by the outer try-catch block
+      throw error;
     }
+    
+    // Log success for debugging on Vercel
+    console.log('Lead successfully logged:', data);
 
-    console.log("LEAD SUCCESSFULLY LOGGED:", data);
-    return NextResponse.json({ success: true, lead: data[0] });
-  } catch (error) {
-    console.error("LOG-LEAD API ERROR:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal server error" },
-      { status: 500 }
-    );
+    // Return a success response
+    return NextResponse.json({ message: 'Lead logged successfully', data }, { status: 200 });
+
+  } catch (err) {
+    // Log the full error for debugging on Vercel
+    console.error('API Error:', err);
+
+    // Return a generic error response to the client
+    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+    return NextResponse.json({ error: 'Failed to log lead', details: errorMessage }, { status: 500 });
   }
 }
