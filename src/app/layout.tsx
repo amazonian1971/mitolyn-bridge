@@ -1,14 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
-import Providers from './providers'; // Import the new Providers component
+import Providers from './providers';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Mitolyn - Natural Metabolism Booster for Women Over 40',
-  // Small but important fix: Changed to 180-day guarantee to match our landing page
   description: 'Gentle, non-stimulant metabolic support. Promote steady energy with natural ingredients. Made in USA with a 180-day guarantee.',
 };
 
@@ -51,6 +50,27 @@ export default function RootLayout({
           }}
         />
         {/* --- END OF CLARITY SCRIPT --- */}
+
+        {/* --- TABOOLA PIXEL CODE --- */}
+        <Script
+          id="taboola-pixel"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window._tfa = window._tfa || [];
+              window._tfa.push({notify: 'event', name: 'page_view', id: 1189206});
+              !function (t, f, a, x) {
+                     if (!document.getElementById(x)) {
+                        t.async = 1;t.src = a;t.id=x;f.parentNode.insertBefore(t, f);
+                     }
+              }(document.createElement('script'),
+              document.getElementsByTagName('script')[0],
+              '//cdn.taboola.com/libtrc/unip/1189206/tfa.js',
+              'tb_tfa_script');
+            `,
+          }}
+        />
+        {/* --- END OF TABOOLA PIXEL CODE --- */}
       </head>
       <body className={inter.className}>
         {/* --- GOOGLE TAG MANAGER (BODY - NOSCRIPT) --- */}
@@ -64,7 +84,6 @@ export default function RootLayout({
         </noscript>
         {/* --- END OF GTM (BODY) --- */}
 
-        {/* Wrap the children with the Providers component */}
         <Providers>
           {children}
         </Providers>
