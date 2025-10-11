@@ -206,7 +206,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="md:order-2">
             <img 
-              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760177437375-0199d2c0-1837-78b2-bf57-b14ce055d711.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251011T101037Z&X-Amz-Expires=3600&X-Amz-Signature=cab7f2c7b3320c254517e38cb10b945e841c0a1bbb902b9a053e74fc76b0fb73&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760177776793-0199d2c4-bd52-7474-b246-aff0739f970b.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251011T103446Z&X-Amz-Expires=3600&X-Amz-Signature=8c1cb05186f4763c3d5ab351694042acdb5c9ee27d306ec5e542750cd480986a&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
               alt="Radiant woman in her 40s enjoying a healthy smoothie and feeling vibrant"
               className="rounded-2xl shadow-xl w-full h-auto object-cover"
             />
