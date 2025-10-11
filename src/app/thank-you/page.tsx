@@ -8,7 +8,7 @@ const lora = Lora({ subsets: ['latin'], weight: ['600', '700'], variable: '--fon
 export default function ThankYouPage() {
     // --- YOUR LINKS ARE INTEGRATED HERE ---
     const affiliateLink = "https://97391o5ztygoezeaxjw8ce3zbx.hop.clickbank.net";
-    const pdfLink = "https://drive.google.com/file/d/1lzNMKhC3y4OjwiyIFvZ2IA8fZvfCTi0q/view?usp=sharing";
+    const pdfLink = "https://drive.google.com/file/d/1OCvhlcxFKVWJryy4cXVuW_XMbS1aSb-G/view?usp=sharing";
 
     const handleRedirect = () => {
         // Redirects to the affiliate offer
