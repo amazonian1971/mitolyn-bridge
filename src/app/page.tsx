@@ -56,17 +56,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email }),
       });
-
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", "conversion", {
-          send_to: "AW-968379698/LEAD_CONVERSION_ID",
-          value: 1.0,
-          currency: "USD",
-        });
-      }
-      
       router.push('/thank-you');
-
     } catch (error) {
       console.error("Failed to submit lead:", error);
       alert('An error occurred. Please try again.');
@@ -100,9 +90,9 @@ export default function Home() {
   }, []);
 
   const faqs = [
-    { question: "Is Mitolyn safe for women over 40?", answer: "Yes. Mitolyn is formulated with gentle, natural ingredients specifically chosen for their safety and efficacy. As with any new supplement, we recommend consulting your physician before use." },
+    { question: "Is this safe for women over 40?", answer: "Yes. Mitolyn is formulated with gentle, natural ingredients specifically chosen for their safety and efficacy. As with any new supplement, we recommend consulting your physician before use." },
     { question: "How long until I see results?", answer: "Many users report feeling a noticeable difference in their energy levels within the first two weeks of consistent daily use. However, for best results, we recommend a 3-month course to allow the ingredients to work synergistically with your body." },
-    { question: "What if it doesn't work for me?", answer: "We are confident you'll love Mitolyn. That's why every bottle is backed by our iron-clad 180-day, no-questions-asked, money-back guarantee. Your journey to feeling great is completely risk-free." },
+    { question: "What if it doesn't work for me?", answer: "Every bottle of Mitolyn is backed by our iron-clad 180-day, no-questions-asked, money-back guarantee. Your journey to feeling great is completely risk-free." },
     { question: "What are the ingredients?", answer: "Mitolyn contains a proprietary blend of natural, AMPK-activating compounds including Berberine, Ginseng, and Alpha-Lipoic Acid, all chosen to support your body's cellular energy and metabolism." }
   ];
 
@@ -118,24 +108,21 @@ export default function Home() {
 
   return (
     <div className={`${inter.variable} ${lora.variable} font-sans bg-stone-50 text-gray-800`}>
-      {/* --- Announcement Bar --- */}
       <div className="bg-emerald-600 text-white text-center p-2 text-sm font-semibold">
         Limited Time: Free Shipping On All U.S. Orders!
       </div>
       
-      {/* --- HERO SECTION RE-ENGINEERED --- */}
+      {/* --- HERO SECTION - "ULTRA-DIRECT" PIVOT --- */}
       <header className="relative text-center py-20 md:py-28 px-4 bg-gradient-to-b from-white to-emerald-50 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-20"></div>
         <div className="relative max-w-4xl mx-auto">
-      
-          <p className="font-semibold text-emerald-700 mb-4 animate-in fade-in slide-in-from-top duration-500 uppercase tracking-wider">The Yale-Celebrated Discovery</p>
           
           <h1 className={`font-serif text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-in fade-in slide-in-from-top duration-700 ${lora.className}`}>
-            Activate Your 'Metabolic Master Switch'
+            The #1 Metabolism Booster for Women Over 40
           </h1>
 
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-10 animate-in fade-in slide-in-from-top duration-900">
-            Discover the 5 'Metabolic Master Switch' foods that help support natural, all-day energy for women over 40. **Get the free Quick-Start Guide instantly.**
+            This gentle, non-stimulant formula helps fire up your metabolism and support all-day energy. Get your free guide to the 5 key foods that support this process.
           </p>
           
           <div className="animate-in fade-in slide-in-from-bottom duration-1000">
@@ -144,7 +131,7 @@ export default function Home() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your best email address"
+                placeholder="Enter your email for the FREE guide"
                 required
                 className="w-full px-6 py-4 text-lg text-gray-800 bg-white border-2 border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition"
               />
@@ -153,7 +140,7 @@ export default function Home() {
                 disabled={loading}
                 className="w-full px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg hover:shadow-xl text-white font-bold text-lg transition-all transform hover:-translate-y-1 disabled:opacity-70 flex items-center justify-center space-x-3"
               >
-                <span>{loading ? 'Sending...' : 'Send Me The Guide!'}</span>
+                <span>{loading ? 'Sending...' : 'Get My Free Guide!'}</span>
                 <span>→</span>
               </button>
             </form>
@@ -170,8 +157,8 @@ export default function Home() {
       {/* --- How It Works Section --- */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 text-center">
-            <h2 className={`font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4 ${lora.className}`}>How Mitolyn Activates Your Master Switch</h2>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">It's not about punishing diets or exhaustive workouts. It's about supporting your body's natural metabolic engine in three simple steps.</p>
+            <h2 className={`font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4 ${lora.className}`}>How This Formula Supports Your Metabolism</h2>
+            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">It works with your body's natural processes in three simple steps.</p>
             <div className="grid md:grid-cols-3 gap-8 md:gap-12">
                 <div className="flex flex-col items-center">
                     <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-2xl mb-4 font-bold text-emerald-700">1</div>
@@ -192,7 +179,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- Testimonials Section (MOVED UP) --- */}
+      {/* --- Testimonials Section --- */}
       <section className="py-16 md:py-24 bg-emerald-700 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className={`font-serif text-3xl md:text-4xl font-bold mb-12 ${lora.className}`}>Real Women, Real Results</h2>
@@ -213,14 +200,13 @@ export default function Home() {
             </div>
         </div>
       </section>
-      
+
       {/* --- Features & Product Section --- */}
       <section className="py-16 md:py-24 bg-stone-50">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="md:order-2">
-            {/* --- YOUR NEW IMAGE IS HERE --- */}
             <img 
-              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760120087374-0199cf55-006a-7473-a224-2eb403e0bfac.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251010%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251010T181447Z&X-Amz-Expires=3600&X-Amz-Signature=ac6a2f02c1eaeabd4de75cc86ec3802e836b285b59cfd2186ea1b98754f8ebbd&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760177437375-0199d2c0-1837-78b2-bf57-b14ce055d711.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251011T101037Z&X-Amz-Expires=3600&X-Amz-Signature=cab7f2c7b3320c254517e38cb10b945e841c0a1bbb902b9a053e74fc76b0fb73&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
               alt="Radiant woman in her 40s enjoying a healthy smoothie and feeling vibrant"
               className="rounded-2xl shadow-xl w-full h-auto object-cover"
             />
@@ -279,7 +265,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+  
       <footer className="py-8 px-4 bg-gray-900 text-gray-400">
         <div className="max-w-7xl mx-auto text-center text-sm">
           <div className="flex justify-center flex-wrap gap-x-6 gap-y-2 mb-4">
@@ -301,7 +287,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div>
               <p className="font-bold text-gray-900 hidden sm:block">Get Your Free Quick-Start Guide!</p>
-              <p className="text-sm text-gray-600">Discover the 5 'Metabolic Master Switch' foods.</p>
+              <p className="text-sm text-gray-600">Discover the 5 key foods that support your metabolism.</p>
             </div>
             <a
               href="#"
