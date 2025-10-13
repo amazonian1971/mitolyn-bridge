@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from "react";
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
 import { Inter, Lora } from 'next/font/google';
 
 // --- Icon Components (Unaltered) ---
@@ -36,32 +35,21 @@ const lora = Lora({ subsets: ['latin'], weight: ['500', '600', '700'], variable:
 
 
 export default function Home() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  
+  // --- NEW: Link to your Google Form Quiz ---
+  const quizLink = "https://forms.gle/15geQcbm5fiTNt2J6";
 
-  const handleEmailSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-    setLoading(true);
-
-    try {
-      await fetch("/api/log-lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email }),
+  const handleTakeQuiz = () => {
+    // --- NEW: Track the click event with GTM/gtag before redirecting ---
+    if (typeof window !== "undefined" && (window as any).gtag) {
+      (window as any).gtag('event', 'quiz_start', {
+        'event_category': 'engagement',
+        'event_label': 'Hero CTA Click'
       });
-      router.push('/thank-you');
-    } catch (error) {
-      console.error("Failed to submit lead:", error);
-      alert('An error occurred. Please try again.');
-      setLoading(false);
     }
+    window.location.href = quizLink;
   };
 
   const testimonials = [
@@ -105,50 +93,38 @@ export default function Home() {
     "Made in the USA in a GMP-Certified Facility"
   ];
 
-
   return (
     <div className={`${inter.variable} ${lora.variable} font-sans bg-stone-50 text-gray-800`}>
       <div className="bg-emerald-600 text-white text-center p-2 text-sm font-semibold">
         Limited Time: Free Shipping On All U.S. Orders!
       </div>
       
-      {/* --- HERO SECTION - "ULTRA-DIRECT" PIVOT --- */}
+      {/* --- HERO SECTION - "QUIZ FUNNEL" PIVOT --- */}
       <header className="relative text-center py-20 md:py-28 px-4 bg-gradient-to-b from-white to-emerald-50 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-20"></div>
         <div className="relative max-w-4xl mx-auto">
           
           <h1 className={`font-serif text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-in fade-in slide-in-from-top duration-700 ${lora.className}`}>
-            The #1 Metabolism Booster for Women Over 40
+            What's Your Metabolic Type?
           </h1>
 
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-10 animate-in fade-in slide-in-from-top duration-900">
-            This gentle, non-stimulant formula helps fire up your metabolism and support all-day energy. Get your free guide to the 5 key foods that support this process.
+            Take our free 60-second quiz to discover why your metabolism might be stuck and get personalized tips. Find out your Metabolic Type now.
           </p>
           
           <div className="animate-in fade-in slide-in-from-bottom duration-1000">
-            <form onSubmit={handleEmailSubmit} className="max-w-lg mx-auto space-y-4">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email for the FREE guide"
-                required
-                className="w-full px-6 py-4 text-lg text-gray-800 bg-white border-2 border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg hover:shadow-xl text-white font-bold text-lg transition-all transform hover:-translate-y-1 disabled:opacity-70 flex items-center justify-center space-x-3"
-              >
-                <span>{loading ? 'Sending...' : 'Get My Free Guide!'}</span>
-                <span>→</span>
-              </button>
-            </form>
+            <button
+              onClick={handleTakeQuiz}
+              className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg hover:shadow-xl text-white font-bold text-lg transition-all transform hover:-translate-y-1 flex items-center justify-center space-x-3 w-full max-w-md mx-auto"
+            >
+              <span>Take The Free Quiz!</span>
+              <span>→</span>
+            </button>
             
             <div className="flex justify-center gap-4 mt-4 flex-wrap text-xs text-gray-600">
+              <span>✔️ Free & Instant</span>
+              <span>💡 Personalized Results</span>
               <span>🔒 100% Secure</span>
-              <span>✔️ Instant Access</span>
-              <span>🚫 We hate spam</span>
             </div>
           </div>
         </div>
@@ -201,12 +177,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- Features & Product Section --- */}
+      {/* --- Features & Product Section (PRESERVED) --- */}
       <section className="py-16 md:py-24 bg-stone-50">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div className="md:order-2">
             <img 
-              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760177776793-0199d2c4-bd52-7474-b246-aff0739f970b.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251011%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251011T103446Z&X-Amz-Expires=3600&X-Amz-Signature=8c1cb05186f4763c3d5ab351694042acdb5c9ee27d306ec5e542750cd480986a&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760177776793-0199d2c4-bd52-7474-b246-aff0739f970b.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251013%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251013T141154Z&X-Amz-Expires=3600&X-Amz-Signature=d3bd7a97f44082655c6cd0634bd067ea7ab2635b3243396244415675f1d9bc1f&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
               alt="Radiant woman in her 40s enjoying a healthy smoothie and feeling vibrant"
               className="rounded-2xl shadow-xl w-full h-auto object-cover"
             />
@@ -286,17 +262,16 @@ export default function Home() {
         <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-gray-200 shadow-2xl z-50 animate-in slide-in-from-bottom duration-300">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div>
-              <p className="font-bold text-gray-900 hidden sm:block">Get Your Free Quick-Start Guide!</p>
-              <p className="text-sm text-gray-600">Discover the 5 key foods that support your metabolism.</p>
+              <p className="font-bold text-gray-900 hidden sm:block">Discover Your Metabolic Type.</p>
+              <p className="text-sm text-gray-600">Take the free 60-second quiz.</p>
             </div>
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            <button
+              onClick={handleTakeQuiz}
               className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center space-x-2 shadow-md"
             >
-              <span>Get The Guide</span>
+              <span>Take The Quiz</span>
               <span>→</span>
-            </a>
+            </button>
           </div>
         </div>
       )}
