@@ -1,280 +1,516 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Inter, Lora } from 'next/font/google';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase, type Lead } from '@/lib/supabase';
+import Image from 'next/image';
 
-// --- Icon Components (Unaltered) ---
-const CheckIcon = ({ className = "w-6 h-6 text-emerald-500" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-  </svg>
-);
-const StarIcon = ({ className = "w-5 h-5 text-amber-400" }: { className?: string }) => (
-  <svg className={className} fill="currentColor" viewBox="0 0 20 20">
-    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-  </svg>
-);
-const PlusIcon = ({ className = "w-6 h-6 text-gray-500" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-  </svg>
-);
-const MinusIcon = ({ className = "w-6 h-6 text-emerald-600" }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
-  </svg>
-);
-const ShieldCheckIcon = ({ className = "w-8 h-8 text-emerald-600"}: {className?: string}) => (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a12.02 12.02 0 009 2.056c4.522 0 8.34-1.848 9-2.056a12.02 12.02 0 00-2.382-9.043z" />
-    </svg>
-);
+export default function MitolynBridgePage() {
+  const [email, setEmail] = useState('');
+  const [timeLeft, setTimeLeft] = useState(272); // 4:32 in seconds
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showUrgencyBanner, setShowUrgencyBanner] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [utmParams, setUtmParams] = useState<Record<string, string>>({});
+  const [hasSubmittedEmail, setHasSubmittedEmail] = useState(false);
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const lora = Lora({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-lora' });
+  // Affiliate URL from environment variable
+  const AFFILIATE_URL = process.env.NEXT_PUBLIC_AFFILIATE_URL || 'https://hop.clickbank.net/?affiliate=syed222&vendor=mitolyn';
 
-
-export default function Home() {
-  const [showStickyBar, setShowStickyBar] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  
-  // --- NEW: Link to your Google Form Quiz ---
-  const quizLink = "https://forms.gle/15geQcbm5fiTNt2J6";
-
-  const handleTakeQuiz = () => {
-    // --- NEW: Track the click event with GTM/gtag before redirecting ---
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag('event', 'quiz_start', {
-        'event_category': 'engagement',
-        'event_label': 'Hero CTA Click'
+  // Capture UTM parameters on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const params: Record<string, string> = {};
+      
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(param => {
+        const value = urlParams.get(param);
+        if (value) params[param] = value;
       });
+      
+      setUtmParams(params);
+
+      // Check if user already submitted email
+      const submitted = localStorage.getItem('lead_submitted');
+      if (submitted) {
+        setHasSubmittedEmail(true);
+      }
     }
-    window.location.href = quizLink;
+  }, []);
+
+  // Countdown Timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        if (prev === 120) setShowUrgencyBanner(true);
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format time display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Testimonials data
   const testimonials = [
-    { text: "Mitolyn gave me steady energy throughout the day without any jitters. After three weeks, my afternoon crashes disappeared, and I felt more like myself again.", author: "Sarah L, Verified User", avatar: "https://www.uipi.com/wp-content/uploads/2021/06/Testimonial-3.png", rating: 5 },
-    { text: "I was skeptical at first, but after 4 weeks, I noticed I had more stamina for my morning walks — no crash, no guilt, just natural support.", author: "Jamie R., Portland, OR", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80", rating: 5 },
-    { text: "As a busy mom over 40, I needed something simple. Mitolyn fits into my routine — no diet, no stress, just consistent energy.", author: "Lisa M., Texas", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80", rating: 5 }
+    {
+      name: "Jennifer M., 52",
+      location: "Austin, TX",
+      weight: "43 lbs in 12 weeks",
+      quote: "I tried everything for 3 years. This is the ONLY thing that finally worked. My energy is through the roof!",
+      rating: 5,
+    },
+    {
+      name: "Sarah K., 48",
+      location: "Phoenix, AZ", 
+      weight: "31 lbs in 8 weeks",
+      quote: "The 2pm crashes are GONE. I feel like I'm in my 30s again. My husband can't believe the transformation!",
+      rating: 5,
+    },
+    {
+      name: "Linda R., 56",
+      location: "Denver, CO",
+      weight: "37 lbs in 10 weeks",
+      quote: "My doctor was shocked at my bloodwork. Everything improved! This saved my health and my confidence.",
+      rating: 5,
+    }
   ];
 
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
+  // Auto-rotate testimonials
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+    }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
+  // Email validation
+  const validateEmail = (email: string): boolean => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   };
-  
+
+  // Get user's IP address (optional - for analytics)
+  const getUserIP = async () => {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      return data.ip;
+    } catch (error) {
+      console.error('Error fetching IP:', error);
+      return null;
+    }
+  };
+
+  // Save lead to Supabase
+  const saveLead = async (emailAddress: string) => {
+    try {
+      const ip = await getUserIP();
+      
+      const leadData: Lead = {
+        email: emailAddress.toLowerCase(),
+        source: 'bridge_page',
+        campaign: 'mitolyn',
+        utm_source: utmParams.utm_source || 'direct',
+        utm_medium: utmParams.utm_medium || 'none',
+        utm_campaign: utmParams.utm_campaign || 'none',
+        utm_content: utmParams.utm_content || 'none',
+        utm_term: utmParams.utm_term || 'none',
+        ip_address: ip || 'unknown',
+        user_agent: navigator.userAgent,
+        page_url: window.location.href,
+        referrer: document.referrer || 'direct',
+      };
+
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([leadData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        
+        // Check if email already exists
+        if (error.code === '23505') {
+          setEmailError('This email is already registered. Redirecting to presentation...');
+          setTimeout(() => {
+            window.location.href = AFFILIATE_URL;
+          }, 2000);
+          return false;
+        }
+        
+        throw error;
+      }
+
+      // Store lead ID in localStorage for tracking
+      if (data) {
+        localStorage.setItem('lead_id', data.id);
+        localStorage.setItem('lead_submitted', 'true');
+        localStorage.setItem('lead_email', emailAddress);
+      }
+
+      // Track with Facebook Pixel
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Lead', {
+          value: emailAddress,
+          content_name: 'mitolyn_bridge',
+          content_category: 'weight_loss'
+        });
+      }
+
+      // Track with Taboola Pixel
+      if (typeof window !== 'undefined' && (window as any)._tfa) {
+        (window as any)._tfa.push({
+          notify: 'event',
+          name: 'lead',
+          id: 'YOUR_TABOOLA_PIXEL_ID'
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error saving lead:', error);
+      setEmailError('Something went wrong. Please try again.');
+      return false;
+    }
+  };
+
+  // Handle email submission
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError('');
+    
+    if (!email) {
+      setEmailError('Please enter your email address');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    // Save to Supabase
+    const saved = await saveLead(email);
+    
+    if (saved) {
+      setShowSuccessMessage(true);
+      setHasSubmittedEmail(true);
+      
+      // Redirect to VSL after short delay
+      setTimeout(() => {
+        window.location.href = AFFILIATE_URL;
+      }, 1500);
+    }
+    
+    setIsSubmitting(false);
+  };
+
+  // Direct CTA click (without email)
+  const handleDirectCTA = async () => {
+    // If email was already captured, just redirect
+    if (hasSubmittedEmail) {
+      // Update conversion status in Supabase
+      const leadId = localStorage.getItem('lead_id');
+      if (leadId) {
+        await supabase
+          .from('leads')
+          .update({ 
+            converted: true, 
+            conversion_date: new Date().toISOString() 
+          })
+          .eq('id', leadId);
+      }
+    }
+    
+    // Track click event
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'InitiateCheckout');
+    }
+    
+    window.location.href = AFFILIATE_URL;
+  };
+
+  // Track page view on mount
   useEffect(() => {
-    const handleScroll = () => setShowStickyBar(window.scrollY > 600);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Track page view with Facebook
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'PageView');
+    }
+    
+    // Track page view with Taboola
+    if (typeof window !== 'undefined' && (window as any)._tfa) {
+      (window as any)._tfa.push({
+        notify: 'event',
+        name: 'page_view',
+        id: 'YOUR_TABOOLA_PIXEL_ID'
+      });
+    }
   }, []);
-
-  const faqs = [
-    { question: "Is this safe for women over 40?", answer: "Yes. Mitolyn is formulated with gentle, natural ingredients specifically chosen for their safety and efficacy. As with any new supplement, we recommend consulting your physician before use." },
-    { question: "How long until I see results?", answer: "Many users report feeling a noticeable difference in their energy levels within the first two weeks of consistent daily use. However, for best results, we recommend a 3-month course to allow the ingredients to work synergistically with your body." },
-    { question: "What if it doesn't work for me?", answer: "Every bottle of Mitolyn is backed by our iron-clad 180-day, no-questions-asked, money-back guarantee. Your journey to feeling great is completely risk-free." },
-    { question: "What are the ingredients?", answer: "Mitolyn contains a proprietary blend of natural, AMPK-activating compounds including Berberine, Ginseng, and Alpha-Lipoic Acid, all chosen to support your body's cellular energy and metabolism." }
-  ];
-
-  const features = [
-    "Features a Powerful AMPK-Activating Blend",
-    "Supports Your Body's 'Metabolic Master Switch'",
-    "Promotes All-Day Energy Without Jitters",
-    "Helps Reduce Afternoon Slumps & Cravings",
-    "Natural, Non-Stimulant Formula",
-    "Made in the USA in a GMP-Certified Facility"
-  ];
 
   return (
-    <div className={`${inter.variable} ${lora.variable} font-sans bg-stone-50 text-gray-800`}>
-      <div className="bg-emerald-600 text-white text-center p-2 text-sm font-semibold">
-        Limited Time: Free Shipping On All U.S. Orders!
-      </div>
-      
-      {/* --- HERO SECTION - "QUIZ FUNNEL" PIVOT --- */}
-      <header className="relative text-center py-20 md:py-28 px-4 bg-gradient-to-b from-white to-emerald-50 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-20"></div>
-        <div className="relative max-w-4xl mx-auto">
-          
-          <h1 className={`font-serif text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6 animate-in fade-in slide-in-from-top duration-700 ${lora.className}`}>
-            What's Your Metabolic Type?
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Urgency Banner */}
+      {showUrgencyBanner && (
+        <div className="fixed top-0 left-0 right-0 bg-red-600 text-white py-2 px-4 text-center z-50 animate-pulse">
+          ⚠️ WARNING: This presentation expires in {formatTime(timeLeft)} - Watch Now!
+        </div>
+      )}
+
+      {/* Main Container */}
+      <div className={`max-w-4xl mx-auto px-4 ${showUrgencyBanner ? 'pt-16' : 'pt-8'} pb-12`}>
+        
+        {/* Header Section */}
+        <header className="text-center mb-8">
+          {/* Countdown Timer */}
+          <div className="inline-block bg-red-100 border-2 border-red-500 rounded-lg px-6 py-3 mb-6">
+            <p className="text-sm text-red-700 font-semibold">
+              ⏰ Video Presentation Expires In:
+            </p>
+            <p className="text-3xl font-bold text-red-600 font-mono">
+              {formatTime(timeLeft)}
+            </p>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+            Harvard Doctor's{' '}
+            <span className="text-green-600">"Mitochondria Method"</span>{' '}
+            Melts <span className="underline">1lb Every 48 Hours</span> After 45
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-10 animate-in fade-in slide-in-from-top duration-900">
-            Take our free 60-second quiz to discover why your metabolism might be stuck and get personalized tips. Find out your Metabolic Type now.
+          {/* Sub-headline */}
+          <p className="text-xl md:text-2xl text-gray-700 mb-8">
+            Without changing your diet, counting calories, or exhausting workouts
           </p>
-          
-          <div className="animate-in fade-in slide-in-from-bottom duration-1000">
-            <button
-              onClick={handleTakeQuiz}
-              className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg shadow-lg hover:shadow-xl text-white font-bold text-lg transition-all transform hover:-translate-y-1 flex items-center justify-center space-x-3 w-full max-w-md mx-auto"
-            >
-              <span>Take The Free Quiz!</span>
-              <span>→</span>
-            </button>
-            
-            <div className="flex justify-center gap-4 mt-4 flex-wrap text-xs text-gray-600">
-              <span>✔️ Free & Instant</span>
-              <span>💡 Personalized Results</span>
-              <span>🔒 100% Secure</span>
+
+          {/* Authority Proof */}
+          <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+            <div className="flex items-center gap-2 text-gray-600">
+              <span className="text-sm">As seen in:</span>
+              <span className="font-semibold text-blue-600">Journal of Metabolism</span>
+            </div>
+            <div className="text-gray-400">|</div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">👥</span>
+              <span className="font-bold text-green-600">47,000+</span>
+              <span className="text-gray-600">success stories</span>
             </div>
           </div>
-        </div>
-      </header>
-      
-      {/* --- How It Works Section --- */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-            <h2 className={`font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4 ${lora.className}`}>How This Formula Supports Your Metabolism</h2>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">It works with your body's natural processes in three simple steps.</p>
-            <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-                <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-2xl mb-4 font-bold text-emerald-700">1</div>
-                    <h3 className="text-xl font-semibold mb-2">Activates AMPK</h3>
-                    <p className="text-gray-600">The formula signals your 'Metabolic Master Switch' to start working like it used to.</p>
-                </div>
-                <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-2xl mb-4 font-bold text-emerald-700">2</div>
-                    <h3 className="text-xl font-semibold mb-2">Recharges "Cellular Batteries"</h3>
-                    <p className="text-gray-600">It nourishes your mitochondria, the tiny power plants inside your cells, for clean, natural energy.</p>
-                </div>
-                <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-2xl mb-4 font-bold text-emerald-700">3</div>
-                    <h3 className="text-xl font-semibold mb-2">Sustains All-Day Vitality</h3>
-                    <p className="text-gray-600">The result is steady, reliable energy and metabolic support without the jitters or crash.</p>
-                </div>
-            </div>
-        </div>
-      </section>
+        </header>
 
-      {/* --- Testimonials Section --- */}
-      <section className="py-16 md:py-24 bg-emerald-700 text-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className={`font-serif text-3xl md:text-4xl font-bold mb-12 ${lora.className}`}>Real Women, Real Results</h2>
-            <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-white/20">
-                <img src={testimonials[currentTestimonial].avatar} alt={testimonials[currentTestimonial].author} className="w-20 h-20 rounded-full object-cover mx-auto mb-6 ring-4 ring-white/30" />
-                <p className="text-xl md:text-2xl italic leading-relaxed mb-6">
-                    "{testimonials[currentTestimonial].text}"
+        {/* Video Placeholder / CTA Section */}
+        <div className="bg-white rounded-xl shadow-2xl p-8 mb-10">
+          <div className="relative">
+            {/* Video Thumbnail */}
+            <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video mb-6">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <button
+                  onClick={handleDirectCTA}
+                  className="group relative"
+                >
+                  <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75"></div>
+                  <div className="relative bg-red-600 hover:bg-red-700 text-white rounded-full p-8 transition-all transform hover:scale-110">
+                    <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
+              <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white px-3 py-1 rounded">
+                <span className="text-sm">Free Presentation • 12:47</span>
+              </div>
+            </div>
+
+            {/* Email Capture Form or Success Message */}
+            {!hasSubmittedEmail ? (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 mb-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  🎁 Get Instant Access + Free Bonus Guide
+                </h3>
+                
+                {showSuccessMessage ? (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    ✅ Success! Redirecting to your free presentation...
+                  </div>
+                ) : (
+                  <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setEmailError('');
+                      }}
+                      placeholder="Enter your best email address..."
+                      className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none text-lg ${
+                        emailError ? 'border-red-500' : 'border-gray-300 focus:border-green-500'
+                      }`}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-lg whitespace-nowrap"
+                    >
+                      {isSubmitting ? 'Saving...' : 'Watch Free Video →'}
+                    </button>
+                  </form>
+                )}
+                
+                {emailError && (
+                  <p className="text-red-500 text-sm mt-2">{emailError}</p>
+                )}
+                
+                <p className="text-xs text-gray-500 mt-2">
+                  🔒 Your information is 100% secure and will never be shared
                 </p>
-                <div className="flex justify-center space-x-1 mb-6">
-                    {[...Array(5)].map((_, i) => <StarIcon key={i} className="w-6 h-6 text-amber-300" />)}
-                </div>
-                <p className="font-bold text-lg">{testimonials[currentTestimonial].author}</p>
-                <div className="flex justify-center space-x-3 mt-8">
-                  {testimonials.map((_, index) => (
-                    <button key={index} onClick={() => setCurrentTestimonial(index)} className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonial ? 'bg-white' : 'bg-white/40'}`} />
-                  ))}
-                </div>
-            </div>
-        </div>
-      </section>
+              </div>
+            ) : (
+              <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4 mb-4">
+                <p className="text-green-700 font-semibold">
+                  ✅ Email saved! Click below to watch the presentation.
+                </p>
+              </div>
+            )}
 
-      {/* --- Features & Product Section (PRESERVED) --- */}
-      <section className="py-16 md:py-24 bg-stone-50">
-        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <div className="md:order-2">
-            <img 
-              src="https://messages-prod.27c852f3500f38c1e7786e2c9ff9e48f.r2.cloudflarestorage.com/6e68d108-d89d-4b1d-92e4-5c3d64c88edc/1760177776793-0199d2c4-bd52-7474-b246-aff0739f970b.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=c86e09ae0bc1d897b03dfaa30a8b51f3%2F20251013%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20251013T141154Z&X-Amz-Expires=3600&X-Amz-Signature=d3bd7a97f44082655c6cd0634bd067ea7ab2635b3243396244415675f1d9bc1f&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
-              alt="Radiant woman in her 40s enjoying a healthy smoothie and feeling vibrant"
-              className="rounded-2xl shadow-xl w-full h-auto object-cover"
-            />
+            {/* Direct CTA Button */}
+            <button
+              onClick={handleDirectCTA}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold text-xl py-5 rounded-lg transition-all transform hover:scale-105 shadow-lg animate-pulse"
+            >
+              Watch The Free Presentation →
+            </button>
           </div>
-          <div className="md:order-1">
-            <h2 className={`font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-6 ${lora.className}`}>
-              The Mitolyn Difference
-            </h2>
-            <p className="text-lg text-gray-600 mb-8">This isn't just another supplement. It's a targeted formula designed for peace of mind and real results.</p>
-            <div className="space-y-4">
-              {features.map((feature) => (
-                <div key={feature} className="flex items-center space-x-3">
-                  <CheckIcon />
-                  <span className="text-gray-700 font-medium text-lg">{feature}</span>
+        </div>
+
+        {/* Testimonials Carousel */}
+        <div className="bg-white rounded-xl shadow-xl p-8 mb-10">
+          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+            Real Success Stories From Women Over 45
+          </h2>
+          
+          <div className="relative">
+            {/* Testimonial Display */}
+            <div className="min-h-[200px]">
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className={`transition-all duration-500 ${
+                    index === currentTestimonial ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                  }`}
+                >
+                  <div className="flex flex-col md:flex-row gap-6 items-center">
+                    {/* Avatar */}
+                    <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                      {testimonial.name.charAt(0)}
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="flex-1 text-center md:text-left">
+                      {/* Stars */}
+                      <div className="flex justify-center md:justify-start mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-xl">★</span>
+                        ))}
+                      </div>
+                      
+                      {/* Quote */}
+                      <p className="text-gray-700 italic mb-3 text-lg">
+                        "{testimonial.quote}"
+                      </p>
+                      
+                      {/* Details */}
+                      <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm">
+                        <span className="font-bold text-gray-800">{testimonial.name}</span>
+                        <span className="text-gray-500">{testimonial.location}</span>
+                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold">
+                          Lost {testimonial.weight}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Testimonial Indicators */}
+            <div className="flex justify-center gap-2 mt-6">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === currentTestimonial 
+                      ? 'bg-green-600 w-8' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
               ))}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* --- Guarantee Section --- */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4">
-            <div className="bg-stone-100 border border-stone-200 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-                <ShieldCheckIcon className="w-24 h-24 text-emerald-500 flex-shrink-0" />
-                <div>
-                    <h2 className={`font-serif text-3xl font-bold text-gray-900 mb-3 ${lora.className}`}>Our 180-Day "Feel The Difference" Guarantee</h2>
-                    <p className="text-lg text-gray-600">Try Mitolyn for a full 6 months. If you don't feel a remarkable improvement in your energy and vitality, or if you're not satisfied for any reason whatsoever, simply contact us for a full refund. No questions, no hassles. Your journey to feeling great is 100% risk-free.</p>
-                </div>
-            </div>
-        </div>
-      </section>
-
-      {/* --- FAQ Section --- */}
-      <section className="py-16 md:py-24 bg-stone-50">
-        <div className="max-w-3xl mx-auto px-4">
-          <h2 className={`text-center font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-12 ${lora.className}`}>Your Questions, Answered</h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-                <button
-                  className="w-full flex justify-between items-center p-6 text-left font-semibold text-lg"
-                  onClick={() => toggleFaq(index)}
-                >
-                  <span className="text-gray-900">{faq.question}</span>
-                  {openFaq === index ? <MinusIcon /> : <PlusIcon />}
-                </button>
-                {openFaq === index && (
-                  <div className="p-6 pt-0 text-gray-600 animate-in fade-in duration-300">
-                    <p>{faq.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-  
-      <footer className="py-8 px-4 bg-gray-900 text-gray-400">
-        <div className="max-w-7xl mx-auto text-center text-sm">
-          <div className="flex justify-center flex-wrap gap-x-6 gap-y-2 mb-4">
-            <a href="https://mitolyn.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="https://mitolyn.com/terms" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="https://mitolyn.com/shipping-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Shipping Policy</a>
-            <a href="https://mitolyn.com/return-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Return Policy</a>
-            <a href="/contact" className="hover:text-white transition-colors">Contact Us</a>
-          </div>
-          <p className="max-w-3xl mx-auto">
-            *These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Results may vary from person to person.
-          </p>
-          <p className="mt-2">&copy; {new Date().getFullYear()} MetabolismSupport.com. All Rights Reserved.</p>
-        </div>
-      </footer>
-
-      {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-gray-200 shadow-2xl z-50 animate-in slide-in-from-bottom duration-300">
-          <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Trust Badges */}
+        <div className="bg-gray-100 rounded-lg p-6 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <p className="font-bold text-gray-900 hidden sm:block">Discover Your Metabolic Type.</p>
-              <p className="text-sm text-gray-600">Take the free 60-second quiz.</p>
+              <div className="text-3xl mb-2">🔬</div>
+              <p className="text-sm font-semibold">Science-Based</p>
             </div>
-            <button
-              onClick={handleTakeQuiz}
-              className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center space-x-2 shadow-md"
-            >
-              <span>Take The Quiz</span>
-              <span>→</span>
-            </button>
+            <div>
+              <div className="text-3xl mb-2">✅</div>
+              <p className="text-sm font-semibold">FDA Registered</p>
+            </div>
+            <div>
+              <div className="text-3xl mb-2">🇺🇸</div>
+              <p className="text-sm font-semibold">Made in USA</p>
+            </div>
+            <div>
+              <div className="text-3xl mb-2">💰</div>
+              <p className="text-sm font-semibold">60-Day Guarantee</p>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Final CTA */}
+        <div className="text-center">
+          <button
+            onClick={handleDirectCTA}
+            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-xl px-12 py-5 rounded-lg transition-all transform hover:scale-105 shadow-2xl mb-4"
+          >
+            YES! Show Me The Mitochondria Method →
+          </button>
+          <p className="text-gray-500 text-sm">
+            No credit card required • Watch instantly • 100% Free
+          </p>
+        </div>
+
+        {/* Footer Disclaimer */}
+        <footer className="mt-12 pt-8 border-t border-gray-200 text-center text-xs text-gray-500">
+          <p className="mb-2">
+            * Results vary. Not typical. See disclaimer for details.
+          </p>
+          <p>
+            This site is not a part of the Facebook website or Facebook Inc. Additionally, this site is NOT endorsed by Facebook in any way.
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
