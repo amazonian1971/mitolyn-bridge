@@ -41,6 +41,64 @@ export default function MitolynBridgePage() {
     { name: "Barbara", location: "San Diego, CA", action: "is watching the presentation", timeAgo: "5 minutes ago" }
   ];
 
+  // Inject custom styles only on client side
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.3);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .animate-slideIn {
+        animation: slideIn 0.5s ease-out;
+      }
+      .animate-slideUp {
+        animation: slideUp 0.3s ease-out;
+      }
+      .animate-bounceIn {
+        animation: bounceIn 0.6s ease-out;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Cleanup function to remove the style when component unmounts
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   // Check if email was already captured in this session
   useEffect(() => {
     const capturedEmail = localStorage.getItem('lead_email_captured');
@@ -780,54 +838,3 @@ export default function MitolynBridgePage() {
     </>
   );
 }
-
-// Custom Styles
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  @keyframes slideUp {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-  @keyframes bounceIn {
-    0% {
-      transform: scale(0.3);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1.05);
-    }
-    70% {
-      transform: scale(0.9);
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-  .animate-slideIn {
-    animation: slideIn 0.5s ease-out;
-  }
-  .animate-slideUp {
-    animation: slideUp 0.3s ease-out;
-  }
-  .animate-bounceIn {
-    animation: bounceIn 0.6s ease-out;
-  }
-`;
-document.head.appendChild(style);
