@@ -14,6 +14,7 @@ export default function MitolynBridgePage() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
   const [hasSubmittedEmail, setHasSubmittedEmail] = useState(false);
+  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
 
   // Affiliate URL from environment variable
   const AFFILIATE_URL = process.env.NEXT_PUBLIC_AFFILIATE_URL || 'https://hop.clickbank.net/?affiliate=syed222&vendor=mitolyn';
@@ -220,14 +221,28 @@ export default function MitolynBridgePage() {
     setIsSubmitting(false);
   };
 
-  // Direct CTA click (without email)
-  const handleDirectCTA = async () => {
-    // If email was already captured, just redirect
-    if (hasSubmittedEmail) {
+  // Handle video click - requires email first
+  const handleVideoClick = () => {
+    if (!hasSubmittedEmail) {
+      setShowEmailPrompt(true);
+      // Scroll to email form
+      document.getElementById('email-form')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = AFFILIATE_URL;
+    }
+  };
+
+  // Direct CTA click - requires email first
+  const handleDirectCTA = () => {
+    if (!hasSubmittedEmail) {
+      setShowEmailPrompt(true);
+      // Scroll to email form
+      document.getElementById('email-form')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
       // Update conversion status in Supabase
       const leadId = localStorage.getItem('lead_id');
       if (leadId) {
-        await supabase
+        supabase
           .from('leads')
           .update({ 
             converted: true, 
@@ -235,14 +250,14 @@ export default function MitolynBridgePage() {
           })
           .eq('id', leadId);
       }
+      
+      // Track click event
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'InitiateCheckout');
+      }
+      
+      window.location.href = AFFILIATE_URL;
     }
-    
-    // Track click event
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'InitiateCheckout');
-    }
-    
-    window.location.href = AFFILIATE_URL;
   };
 
   // Track page view on mount
@@ -268,6 +283,22 @@ export default function MitolynBridgePage() {
       {showUrgencyBanner && (
         <div className="fixed top-0 left-0 right-0 bg-red-600 text-white py-2 px-4 text-center z-50 animate-pulse">
           ⚠️ WARNING: This presentation expires in {formatTime(timeLeft)} - Watch Now!
+        </div>
+      )}
+
+      {/* Email Prompt Modal */}
+      {showEmailPrompt && !hasSubmittedEmail && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">Enter Your Email to Continue</h3>
+            <p className="mb-4">Please provide your email address to access this free presentation.</p>
+            <button 
+              onClick={() => setShowEmailPrompt(false)}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg"
+            >
+              OK
+            </button>
+          </div>
         </div>
       )}
 
@@ -320,7 +351,7 @@ export default function MitolynBridgePage() {
             <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video mb-6">
               <div className="absolute inset-0 flex items-center justify-center">
                 <button
-                  onClick={handleDirectCTA}
+                  onClick={handleVideoClick}
                   className="group relative"
                 >
                   <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75"></div>
@@ -334,11 +365,19 @@ export default function MitolynBridgePage() {
               <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white px-3 py-1 rounded">
                 <span className="text-sm">Free Presentation • 12:47</span>
               </div>
+              {!hasSubmittedEmail && (
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                  <div className="bg-white rounded-lg p-4 max-w-sm text-center">
+                    <p className="font-bold text-lg mb-2">🔒 Enter Email to Unlock</p>
+                    <p className="text-sm">This presentation is 100% free but requires your email to access</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Email Capture Form or Success Message */}
             {!hasSubmittedEmail ? (
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 mb-4">
+              <div id="email-form" className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 mb-4 border-2 border-green-300">
                 <h3 className="text-xl font-bold text-gray-800 mb-3">
                   🎁 Get Instant Access + Free Bonus Guide
                 </h3>
@@ -348,29 +387,36 @@ export default function MitolynBridgePage() {
                     ✅ Success! Redirecting to your free presentation...
                   </div>
                 ) : (
-                  <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError('');
-                      }}
-                      placeholder="Enter your best email address..."
-                      className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none text-lg ${
-                        emailError ? 'border-red-500' : 'border-gray-300 focus:border-green-500'
-                      }`}
-                      required
-                      disabled={isSubmitting}
-                    />
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-lg whitespace-nowrap"
-                    >
-                      {isSubmitting ? 'Saving...' : 'Watch Free Video →'}
-                    </button>
-                  </form>
+                  <>
+                    {showEmailPrompt && (
+                      <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                        ⚠️ Please enter your email to access the presentation
+                      </div>
+                    )}
+                    <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setEmailError('');
+                        }}
+                        placeholder="Enter your best email address..."
+                        className={`flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none text-lg ${
+                          emailError ? 'border-red-500' : 'border-gray-300 focus:border-green-500'
+                        }`}
+                        required
+                        disabled={isSubmitting}
+                      />
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-lg whitespace-nowrap"
+                      >
+                        {isSubmitting ? 'Saving...' : 'Watch Free Video →'}
+                      </button>
+                    </form>
+                  </>
                 )}
                 
                 {emailError && (
@@ -394,7 +440,7 @@ export default function MitolynBridgePage() {
               onClick={handleDirectCTA}
               className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold text-xl py-5 rounded-lg transition-all transform hover:scale-105 shadow-lg animate-pulse"
             >
-              Watch The Free Presentation →
+              {hasSubmittedEmail ? 'Watch The Free Presentation →' : 'Enter Email to Watch →'}
             </button>
           </div>
         </div>
@@ -494,7 +540,7 @@ export default function MitolynBridgePage() {
             onClick={handleDirectCTA}
             className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-xl px-12 py-5 rounded-lg transition-all transform hover:scale-105 shadow-2xl mb-4"
           >
-            YES! Show Me The Mitochondria Method →
+            {hasSubmittedEmail ? 'YES! Show Me The Mitochondria Method →' : 'Enter Email to Access →'}
           </button>
           <p className="text-gray-500 text-sm">
             No credit card required • Watch instantly • 100% Free
