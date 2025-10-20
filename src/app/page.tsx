@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient'; // Fixed import path
+
+type PositionType = {
+  bottom?: number;
+  top?: number;
+  left?: number;
+  right?: number;
+};
 
 export default function MitolynBridgePage() {
   const [email, setEmail] = useState('');
@@ -22,8 +29,7 @@ export default function MitolynBridgePage() {
   // FLOATING TESTIMONIALS STATE
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [showTestimonial, setShowTestimonial] = useState(false);
-  // Fixed type definition to accept any positioning properties
-  const [testimonialPosition, setTestimonialPosition] = useState<Record<string, number>>({ bottom: 16, left: 16 });
+  const [testimonialPosition, setTestimonialPosition] = useState<PositionType>({ bottom: 16, left: 16 });
 
   const AFFILIATE_URL = process.env.NEXT_PUBLIC_AFFILIATE_URL || 'https://hop.clickbank.net/?affiliate=syed222&vendor=mitolyn';
 
@@ -79,24 +85,6 @@ export default function MitolynBridgePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Random floating testimonials
-  useEffect(() => {
-    // Show first testimonial after 5 seconds
-    const initialTimer = setTimeout(() => {
-      showRandomTestimonial();
-    }, 5000);
-    
-    // Then show random testimonials at random intervals between 15-30 seconds
-    const testimonialTimer = setInterval(() => {
-      showRandomTestimonial();
-    }, Math.floor(Math.random() * 15000) + 15000); // Random between 15-30 seconds
-    
-    return () => {
-      clearTimeout(initialTimer);
-      clearInterval(testimonialTimer);
-    };
-  }, []);
-
   // Function to show a random testimonial
   const showRandomTestimonial = () => {
     // Pick a random testimonial
@@ -104,7 +92,7 @@ export default function MitolynBridgePage() {
     setCurrentTestimonial(randomIndex);
     
     // Random position (avoiding the middle of the screen)
-    const positions = [
+    const positions: PositionType[] = [
       { bottom: 16, left: 16 }, // Bottom left
       { bottom: 16, right: 16 }, // Bottom right
       { top: 80, left: 16 }, // Top left
@@ -123,10 +111,34 @@ export default function MitolynBridgePage() {
     }, 5000);
   };
 
+  // Random floating testimonials
+  useEffect(() => {
+    // Show first testimonial after 5 seconds
+    const initialTimer = setTimeout(() => {
+      showRandomTestimonial();
+    }, 5000);
+    
+    // Then show random testimonials at random intervals between 15-30 seconds
+    const testimonialTimer = setInterval(() => {
+      showRandomTestimonial();
+    }, Math.floor(Math.random() * 15000) + 15000); // Random between 15-30 seconds
+    
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(testimonialTimer);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   };
 
   // Handle email submission
@@ -155,8 +167,8 @@ export default function MitolynBridgePage() {
         utm_source: utmParams.utm_source || 'direct',
         utm_medium: utmParams.utm_medium || 'none',
         utm_campaign: utmParams.utm_campaign || 'none',
-        page_url: window.location.href,
-        user_agent: navigator.userAgent,
+        page_url: typeof window !== 'undefined' ? window.location.href : '',
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
       }]);
 
       if (error && error.code !== '23505') { // Ignore duplicate email errors
@@ -204,14 +216,66 @@ export default function MitolynBridgePage() {
     }
   };
 
-  // Email validation
-  const validateEmail = (email: string): boolean => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+  // Convert position object to CSS style
+  const getPositionStyle = (position: PositionType): React.CSSProperties => {
+    const style: React.CSSProperties = {};
+    if (position.bottom !== undefined) style.bottom = `${position.bottom}px`;
+    if (position.top !== undefined) style.top = `${position.top}px`;
+    if (position.left !== undefined) style.left = `${position.left}px`;
+    if (position.right !== undefined) style.right = `${position.right}px`;
+    return style;
   };
 
   return (
     <>
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        @keyframes bounceIn {
+          0% {
+            transform: scale(0.3);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.05);
+          }
+          70% {
+            transform: scale(0.9);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        .animate-slideIn {
+          animation: slideIn 0.5s ease-out;
+        }
+        .animate-slideUp {
+          animation: slideUp 0.3s ease-out;
+        }
+        .animate-bounceIn {
+          animation: bounceIn 0.6s ease-out;
+        }
+      `}</style>
+
       {/* Success Popup */}
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-[60] flex items-center justify-center p-4">
@@ -251,7 +315,7 @@ export default function MitolynBridgePage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">Dr. Mitchell's Metabolism Activation Guide</p>
+                  <p className="font-semibold text-gray-900">Dr. Mitchell&apos;s Metabolism Activation Guide</p>
                   <p className="text-sm text-gray-600">Complete PDF guide (Value: $47)</p>
                 </div>
               </div>
@@ -294,7 +358,7 @@ export default function MitolynBridgePage() {
                 📬 Check your inbox in the next 2-5 minutes
               </p>
               <p className="text-xs text-gray-500">
-                (Don't forget to check your spam folder!)
+                (Don&apos;t forget to check your spam folder!)
               </p>
             </div>
             
@@ -339,17 +403,17 @@ export default function MitolynBridgePage() {
               
               {/* Sub-headline */}
               <p className="text-gray-600 mb-6">
-                Enter your email below to unlock instant access to the presentation that's helped 
+                Enter your email below to unlock instant access to the presentation that&apos;s helped 
                 <span className="font-semibold"> 47,392 women</span> transform their bodies
               </p>
               
               {/* Benefits */}
               <div className="bg-green-50 rounded-lg p-4 mb-6">
                 <p className="text-sm font-semibold text-green-800 mb-2">
-                  🎁 You'll Also Get FREE:
+                  🎁 You&apos;ll Also Get FREE:
                 </p>
                 <ul className="text-sm text-left text-green-700 space-y-1">
-                  <li>✓ Dr. Mitchell's Metabolism Activation Guide (PDF)</li>
+                  <li>✓ Dr. Mitchell&apos;s Metabolism Activation Guide (PDF)</li>
                   <li>✓ 7-Day Quick Start Meal Plan</li>
                   <li>✓ Priority Customer Support Access</li>
                 </ul>
@@ -412,7 +476,7 @@ export default function MitolynBridgePage() {
       {showTestimonial && (
         <div 
           className="fixed bg-white shadow-2xl rounded-lg p-4 max-w-sm animate-slideIn z-40 border-l-4 border-green-500"
-          style={testimonialPosition}
+          style={getPositionStyle(testimonialPosition)}
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -466,7 +530,7 @@ export default function MitolynBridgePage() {
             {/* Main Headline */}
             <h1 className="text-4xl md:text-6xl font-bold text-center text-gray-900 mb-6 leading-tight">
               Doctor Discovers 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600"> "Dormant" Metabolism Switch </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600"> &quot;Dormant&quot; Metabolism Switch </span>
               That Forces Your Body To Burn 
               <span className="underline decoration-4 decoration-green-500"> 1-2 Lbs Every 48 Hours</span>
             </h1>
@@ -594,7 +658,7 @@ export default function MitolynBridgePage() {
             <div className="mt-8 p-6 bg-green-50 rounded-xl border-2 border-green-300">
               <p className="text-center text-lg text-gray-800">
                 <span className="font-bold text-green-700">GOOD NEWS:</span> A Harvard medical researcher discovered these symptoms all have the 
-                <span className="font-semibold"> SAME hidden cause</span> - and it's NOT your fault...
+                <span className="font-semibold"> SAME hidden cause</span> - and it&apos;s NOT your fault...
               </p>
             </div>
           </div>
@@ -631,7 +695,7 @@ export default function MitolynBridgePage() {
             </p>
             
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Testimonials - Same as before */}
+              {/* Testimonials */}
               {[
                 {
                   initials: "JM",
@@ -678,7 +742,7 @@ export default function MitolynBridgePage() {
                       {testimonial.result}
                     </span>
                   </div>
-                  <p className="text-gray-700 italic mb-4">"{testimonial.quote}"</p>
+                  <p className="text-gray-700 italic mb-4">&quot;{testimonial.quote}&quot;</p>
                   <p className="text-xs text-gray-500">Verified Purchase ✓</p>
                 </div>
               ))}
@@ -696,7 +760,7 @@ export default function MitolynBridgePage() {
               
               <p className="text-center text-lg text-gray-700 mb-8">
                 Watch the short free video that explains everything - including the exact 7-second ritual 
-                that's helping thousands of women finally lose weight after 45
+                that&apos;s helping thousands of women finally lose weight after 45
               </p>
 
               {/* Urgency Box */}
@@ -780,54 +844,3 @@ export default function MitolynBridgePage() {
     </>
   );
 }
-
-// Custom Styles
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  @keyframes slideUp {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-  @keyframes bounceIn {
-    0% {
-      transform: scale(0.3);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1.05);
-    }
-    70% {
-      transform: scale(0.9);
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-  .animate-slideIn {
-    animation: slideIn 0.5s ease-out;
-  }
-  .animate-slideUp {
-    animation: slideUp 0.3s ease-out;
-  }
-  .animate-bounceIn {
-    animation: bounceIn 0.6s ease-out;
-  }
-`;
-document.head.appendChild(style);
