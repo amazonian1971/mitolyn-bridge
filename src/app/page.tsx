@@ -22,7 +22,8 @@ export default function MitolynBridgePage() {
   // FLOATING TESTIMONIALS STATE
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [showTestimonial, setShowTestimonial] = useState(false);
-  const [testimonialPosition, setTestimonialPosition] = useState({ bottom: 16, left: 16 });
+  // Fixed type definition to accept any positioning properties
+  const [testimonialPosition, setTestimonialPosition] = useState<Record<string, number>>({ bottom: 16, left: 16 });
 
   const AFFILIATE_URL = process.env.NEXT_PUBLIC_AFFILIATE_URL || 'https://hop.clickbank.net/?affiliate=syed222&vendor=mitolyn';
 
