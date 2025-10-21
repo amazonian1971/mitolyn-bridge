@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
-export default function MitolynBridgePage() {
+export default function MitolynLandingPage() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [timeLeft, setTimeLeft] = useState(872); // 14:32
@@ -22,10 +22,56 @@ export default function MitolynBridgePage() {
   // FLOATING TESTIMONIALS STATE
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [showTestimonial, setShowTestimonial] = useState(false);
-  // Using CSSProperties type to allow any valid CSS positioning
   const [testimonialPosition, setTestimonialPosition] = useState<React.CSSProperties>({ bottom: 16, left: 16 });
+  
+  // VIDEO STATE
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  
+  // PRICING STATE
+  const [selectedPackage, setSelectedPackage] = useState('3');
+  const [showFAQ, setShowFAQ] = useState(false);
 
   const AFFILIATE_URL = process.env.NEXT_PUBLIC_AFFILIATE_URL || 'https://hop.clickbank.net/?affiliate=syed222&vendor=mitolyn';
+
+  // Testimonials data
+  const testimonials = [
+    {
+      name: "Jennifer M.",
+      age: 52,
+      location: "Austin, TX",
+      result: "Lost 43 lbs in 12 weeks",
+      quote: "I cried when I stepped on the scale this morning. 43 pounds GONE! I haven't weighed this since my 30s. The crazy part? I'm eating MORE than before. My energy is through the roof!",
+      rating: 5,
+      image: "https://picsum.photos/seed/jennifer/100/100.jpg"
+    },
+    {
+      name: "Sarah K.",
+      age: 48,
+      location: "Phoenix, AZ",
+      result: "Lost 31 lbs in 8 weeks",
+      quote: "The 2pm crashes are GONE. Completely gone! I used to need 3 cups of coffee just to survive the afternoon. Now I have energy all day. My doctor was shocked!",
+      rating: 5,
+      image: "https://picsum.photos/seed/sarah/100/100.jpg"
+    },
+    {
+      name: "Linda R.",
+      age: 56,
+      location: "Denver, CO",
+      result: "Lost 37 lbs in 10 weeks",
+      quote: "My blood pressure is normal for the first time in 10 years! My doctor reduced my medications. I've lost 37 pounds and 5 dress sizes. This saved my health!",
+      rating: 5,
+      image: "https://picsum.photos/seed/linda/100/100.jpg"
+    },
+    {
+      name: "Patricia T.",
+      age: 61,
+      location: "Seattle, WA",
+      result: "Lost 52 lbs in 14 weeks",
+      quote: "I thought weight loss after 60 was impossible. I was WRONG! 52 pounds gone and I feel 30 years younger. My grandkids can't keep up with me now!",
+      rating: 5,
+      image: "https://picsum.photos/seed/patricia/100/100.jpg"
+    }
+  ];
 
   // Floating testimonials data
   const floatingTestimonials = [
@@ -39,6 +85,67 @@ export default function MitolynBridgePage() {
     { name: "Donna", location: "Portland, OR", action: "just joined the priority support", timeAgo: "8 minutes ago" },
     { name: "Michelle", location: "Atlanta, GA", action: "started her transformation journey", timeAgo: "3 minutes ago" },
     { name: "Barbara", location: "San Diego, CA", action: "is watching the presentation", timeAgo: "5 minutes ago" }
+  ];
+
+  // Pricing packages
+  const packages = [
+    {
+      id: '1',
+      name: '30-Day Supply',
+      bottles: 1,
+      price: 59,
+      originalPrice: 89,
+      savings: 30,
+      popular: false,
+      bonus: false,
+      shipping: '+ $9.95 shipping'
+    },
+    {
+      id: '3',
+      name: '90-Day Supply',
+      bottles: 3,
+      price: 147,
+      originalPrice: 267,
+      savings: 120,
+      popular: true,
+      bonus: true,
+      shipping: 'FREE U.S. shipping'
+    },
+    {
+      id: '6',
+      name: '180-Day Supply',
+      bottles: 6,
+      price: 234,
+      originalPrice: 534,
+      savings: 300,
+      popular: false,
+      bonus: true,
+      shipping: 'FREE U.S. shipping'
+    }
+  ];
+
+  // FAQ data
+  const faqs = [
+    {
+      question: "How does Mitolyn work?",
+      answer: "Mitolyn works by optimizing mitochondrial function at the cellular level. It enhances ATP production (your body's true energy currency) and improves mitochondrial efficiency, helping your body naturally burn fat more efficiently and sustain higher energy levels."
+    },
+    {
+      question: "Are there any side effects?",
+      answer: "Most users do not experience significant negative side effects. Some first-time users report temporary digestive discomfort, such as bloating or mild gas, particularly in the first few days of use. This is typically a sign of the body adjusting to increased fat metabolism and cellular energy production."
+    },
+    {
+      question: "How long until I see results?",
+      answer: "Results vary by individual, but many users report more stable energy within the first week. By weeks 3-4, most notice significant fatigue reduction and their metabolism begins burning more fuel. For best results, consistent use for at least 90 days is recommended."
+    },
+    {
+      question: "Is Mitolyn safe?",
+      answer: "Yes, Mitolyn is formulated with natural plant-based compounds and is free from stimulants, synthetic additives, or artificial appetite suppressants. It's manufactured in an FDA-registered, GMP-certified facility. However, if you have pre-existing medical conditions or are taking medications, consult your doctor before use."
+    },
+    {
+      question: "What if it doesn't work for me?",
+      answer: "Mitolyn comes with a 90-day money-back guarantee. If you're not completely satisfied with your results, simply return the product (even empty bottles) for a full refund, no questions asked."
+    }
   ];
 
   // Inject custom styles only on client side
@@ -81,6 +188,17 @@ export default function MitolynBridgePage() {
           opacity: 1;
         }
       }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+      }
       .animate-slideIn {
         animation: slideIn 0.5s ease-out;
       }
@@ -90,10 +208,12 @@ export default function MitolynBridgePage() {
       .animate-bounceIn {
         animation: bounceIn 0.6s ease-out;
       }
+      .animate-pulse {
+        animation: pulse 2s infinite;
+      }
     `;
     document.head.appendChild(style);
     
-    // Cleanup function to remove the style when component unmounts
     return () => {
       document.head.removeChild(style);
     };
@@ -104,8 +224,7 @@ export default function MitolynBridgePage() {
     const capturedEmail = localStorage.getItem('lead_email_captured');
     if (capturedEmail) {
       setEmail(capturedEmail);
-      // Commented out to ensure email modal always shows first
-      // setEmailCaptured(true);
+      setEmailCaptured(true);
     }
   }, []);
 
@@ -140,15 +259,13 @@ export default function MitolynBridgePage() {
 
   // Random floating testimonials
   useEffect(() => {
-    // Show first testimonial after 5 seconds
     const initialTimer = setTimeout(() => {
       showRandomTestimonial();
     }, 5000);
     
-    // Then show random testimonials at random intervals between 15-30 seconds
     const testimonialTimer = setInterval(() => {
       showRandomTestimonial();
-    }, Math.floor(Math.random() * 15000) + 15000); // Random between 15-30 seconds
+    }, Math.floor(Math.random() * 15000) + 15000);
     
     return () => {
       clearTimeout(initialTimer);
@@ -158,25 +275,22 @@ export default function MitolynBridgePage() {
 
   // Function to show a random testimonial
   const showRandomTestimonial = () => {
-    // Pick a random testimonial
     const randomIndex = Math.floor(Math.random() * floatingTestimonials.length);
     setCurrentTestimonial(randomIndex);
     
-    // Random position (avoiding the middle of the screen)
     const positions = [
-      { bottom: 16, left: 16 }, // Bottom left
-      { bottom: 16, right: 16 }, // Bottom right
-      { top: 80, left: 16 }, // Top left
-      { top: 80, right: 16 }, // Top right
-      { bottom: 120, left: 16 }, // Bottom left, higher
-      { bottom: 120, right: 16 }, // Bottom right, higher
+      { bottom: 16, left: 16 },
+      { bottom: 16, right: 16 },
+      { top: 80, left: 16 },
+      { top: 80, right: 16 },
+      { bottom: 120, left: 16 },
+      { bottom: 120, right: 16 },
     ];
     
     const randomPosition = positions[Math.floor(Math.random() * positions.length)];
     setTestimonialPosition(randomPosition);
     setShowTestimonial(true);
     
-    // Hide after 5 seconds
     setTimeout(() => {
       setShowTestimonial(false);
     }, 5000);
@@ -209,8 +323,9 @@ export default function MitolynBridgePage() {
       // Save to Supabase
       const { error } = await supabase.from('leads').insert([{
         email: email.toLowerCase(),
-        source: 'bridge_page_gated',
+        source: 'landing_page',
         campaign: 'mitolyn',
+        package: selectedPackage,
         utm_source: utmParams.utm_source || 'direct',
         utm_medium: utmParams.utm_medium || 'none',
         utm_campaign: utmParams.utm_campaign || 'none',
@@ -218,7 +333,7 @@ export default function MitolynBridgePage() {
         user_agent: navigator.userAgent,
       }]);
 
-      if (error && error.code !== '23505') { // Ignore duplicate email errors
+      if (error && error.code !== '23505') {
         console.error('Supabase error:', error);
       }
       
@@ -253,9 +368,24 @@ export default function MitolynBridgePage() {
 
   // Handle any CTA click - ALWAYS show email modal first
   const handleCTAClick = () => {
-    // Always show email modal first, regardless of previous capture
-    setAttemptedWatch(true);
-    setShowEmailModal(true);
+    if (emailCaptured) {
+      // Email already captured, redirect immediately
+      window.location.href = AFFILIATE_URL;
+    } else {
+      // Show email capture modal
+      setAttemptedWatch(true);
+      setShowEmailModal(true);
+    }
+  };
+
+  // Handle video click
+  const handleVideoClick = () => {
+    if (emailCaptured) {
+      setShowVideoModal(true);
+    } else {
+      setAttemptedWatch(true);
+      setShowEmailModal(true);
+    }
   };
 
   // Email validation
@@ -266,18 +396,16 @@ export default function MitolynBridgePage() {
 
   return (
     <>
-      {/* Success Popup - Reduced size and mobile optimized */}
+      {/* Success Popup */}
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 relative animate-bounceIn">
-            {/* Success Icon */}
             <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
               <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
             </div>
             
-            {/* Success Message */}
             <h2 className="text-xl md:text-2xl font-bold text-center text-gray-900 mb-3">
               Thank You, {email.split('@')[0]}! 🎉
             </h2>
@@ -286,14 +414,12 @@ export default function MitolynBridgePage() {
               Your free bonuses are being sent to:
             </p>
             
-            {/* Email Display */}
             <div className="bg-green-50 border-2 border-green-300 rounded-lg p-3 mb-4">
               <p className="text-center font-semibold text-green-800 text-sm">
                 📧 {email}
               </p>
             </div>
             
-            {/* Bonuses List */}
             <div className="space-y-2 mb-4">
               <h3 className="font-bold text-gray-900 text-center mb-2 text-sm">Your FREE Gifts Include:</h3>
               
@@ -336,13 +462,11 @@ export default function MitolynBridgePage() {
               </div>
             </div>
             
-            {/* Total Value */}
             <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg p-3 mb-4">
               <p className="text-center text-xs text-gray-600">Total Value:</p>
               <p className="text-center text-xl font-bold text-green-700">$171 FREE!</p>
             </div>
             
-            {/* Check Email Message */}
             <div className="text-center">
               <p className="text-xs text-gray-600 mb-2">
                 📬 Check your inbox in the next 2-5 minutes
@@ -352,7 +476,6 @@ export default function MitolynBridgePage() {
               </p>
             </div>
             
-            {/* Redirect Message */}
             <div className="mt-4 text-center">
               <p className="text-xs text-blue-600 animate-pulse">
                 Redirecting to your video presentation...
@@ -362,11 +485,10 @@ export default function MitolynBridgePage() {
         </div>
       )}
 
-      {/* Email Capture Modal Overlay - Mobile optimized */}
-      {showEmailModal && (
+      {/* Email Capture Modal */}
+      {showEmailModal && !emailCaptured && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 relative animate-slideUp">
-            {/* Close button */}
             <button 
               onClick={() => setShowEmailModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -376,9 +498,7 @@ export default function MitolynBridgePage() {
               </svg>
             </button>
             
-            {/* Modal Content */}
             <div className="text-center">
-              {/* Icon */}
               <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
@@ -386,18 +506,15 @@ export default function MitolynBridgePage() {
                 </svg>
               </div>
               
-              {/* Headline */}
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
                 One Quick Step to Watch Your Free Video
               </h2>
               
-              {/* Sub-headline */}
               <p className="text-gray-600 mb-6 text-sm">
                 Enter your email below to unlock instant access to the presentation that's helped 
                 <span className="font-semibold"> 47,392 women</span> transform their bodies
               </p>
               
-              {/* Benefits */}
               <div className="bg-green-50 rounded-lg p-4 mb-6">
                 <p className="text-sm font-semibold text-green-800 mb-2">
                   🎁 You'll Also Get FREE:
@@ -409,7 +526,6 @@ export default function MitolynBridgePage() {
                 </ul>
               </div>
               
-              {/* Email Form */}
               <form onSubmit={handleEmailSubmit} className="space-y-3">
                 <input
                   type="email"
@@ -439,12 +555,10 @@ export default function MitolynBridgePage() {
                 </button>
               </form>
               
-              {/* Privacy */}
               <p className="text-xs text-gray-500 mt-4">
                 🔒 Your email is 100% secure. We hate spam as much as you do.
               </p>
               
-              {/* Urgency */}
               <div className="mt-6 p-3 bg-red-50 rounded-lg">
                 <p className="text-sm text-red-700">
                   ⏰ Only <span className="font-bold">{spotsLeft} spots</span> remaining • Video expires in <span className="font-bold">{formatTime(timeLeft)}</span>
@@ -455,14 +569,32 @@ export default function MitolynBridgePage() {
         </div>
       )}
 
-      {/* Success Notification */}
-      {emailCaptured && attemptedWatch && (
-        <div className="fixed top-20 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slideIn">
-          <p className="font-semibold">✓ Access Granted! Redirecting to video...</p>
+      {/* Video Modal */}
+      {showVideoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full p-6 relative">
+            <button 
+              onClick={() => setShowVideoModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="aspect-video bg-black rounded-lg overflow-hidden">
+              <iframe
+                src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+                title="Mitolyn Presentation"
+                className="w-full h-full"
+                allowFullScreen
+              />
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Random Floating Testimonials - Mobile optimized */}
+      {/* Floating Testimonials */}
       {showTestimonial && (
         <div 
           className="fixed bg-white shadow-2xl rounded-lg p-3 max-w-xs animate-slideIn z-40 border-l-4 border-green-500"
@@ -489,7 +621,7 @@ export default function MitolynBridgePage() {
         </div>
       )}
 
-      {/* Sticky Header Bar - Mobile optimized */}
+      {/* Sticky Header Bar */}
       <div className="sticky top-0 bg-red-600 text-white py-2 z-30 shadow-md">
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center text-xs">
           <div className="flex items-center gap-2">
@@ -507,7 +639,7 @@ export default function MitolynBridgePage() {
       {/* Main Content */}
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         
-        {/* HERO SECTION - Mobile optimized */}
+        {/* HERO SECTION */}
         <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 md:py-12">
           <div className="max-w-5xl mx-auto px-4">
             {/* Pre-headline */}
@@ -532,29 +664,30 @@ export default function MitolynBridgePage() {
               <span className="font-semibold text-gray-900"> until now</span>
             </p>
 
-            {/* Hero Image/Video Preview - LOCKED STATE */}
+            {/* Video Section */}
             <div className="relative max-w-3xl mx-auto mb-6 md:mb-8">
               <div className="relative bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-2xl aspect-video">
-                {/* Lock Overlay - Always show since email is required first */}
-                <div className="absolute inset-0 bg-black bg-opacity-60 z-10 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                      </svg>
+                {!emailCaptured && (
+                  <div className="absolute inset-0 bg-black bg-opacity-60 z-10 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-12 h-12 md:w-16 md:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <p className="text-white font-semibold text-base md:text-lg mb-2">Video Locked</p>
+                      <p className="text-white text-sm md:text-base opacity-90">Enter your email to unlock instant access</p>
                     </div>
-                    <p className="text-white font-semibold text-base md:text-lg mb-2">Video Locked</p>
-                    <p className="text-white text-sm md:text-base opacity-90">Enter your email to unlock instant access</p>
                   </div>
-                </div>
+                )}
                 
                 <div className="absolute inset-0 flex items-center justify-center">
                   <button 
-                    onClick={handleCTAClick} 
+                    onClick={handleVideoClick} 
                     className="relative group"
                   >
                     <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75 group-hover:animate-none"></div>
-                    <div className="relative bg-gray-600 hover:bg-gray-700 text-white rounded-full p-6 md:p-8 transition-all transform hover:scale-110 shadow-2xl">
+                    <div className={`relative ${emailCaptured ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-600 hover:bg-gray-700'} text-white rounded-full p-6 md:p-8 transition-all transform hover:scale-110 shadow-2xl`}>
                       <svg className="w-12 h-12 md:w-20 md:h-20" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                       </svg>
@@ -562,150 +695,270 @@ export default function MitolynBridgePage() {
                   </button>
                 </div>
                 
-                {/* Video Stats Overlay */}
                 <div className="absolute top-4 left-4 flex gap-3">
-                  <span className="bg-gray-600 text-white px-3 py-1 rounded-full text-xs md:text-sm font-semibold">
-                    LOCKED
+                  <span className={`${emailCaptured ? 'bg-red-600' : 'bg-gray-600'} text-white px-3 py-1 rounded-full text-xs md:text-sm font-semibold`}>
+                    {emailCaptured ? 'UNLOCKED' : 'LOCKED'}
                   </span>
                   <span className="bg-black bg-opacity-75 text-white px-3 py-1 rounded-full text-xs md:text-sm">
                     12:47
                   </span>
                 </div>
                 
-                {/* Viewer Count */}
                 <div className="absolute bottom-4 right-4 bg-black bg-opacity-75 text-white px-3 py-1 rounded-full text-xs md:text-sm">
                   👁 14,328 watching now
                 </div>
               </div>
               
-              {/* Unlock Button Below Video */}
-              <button 
-                onClick={handleCTAClick}
-                className="w-full mt-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-lg md:text-xl py-4 md:py-5 rounded-lg transition-all transform hover:scale-105 shadow-lg animate-pulse"
-              >
-                🔓 Unlock Free Video Instantly →
-              </button>
+              {!emailCaptured && (
+                <button 
+                  onClick={handleCTAClick}
+                  className="w-full mt-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-lg md:text-xl py-4 md:py-5 rounded-lg transition-all transform hover:scale-105 shadow-lg animate-pulse"
+                >
+                  🔓 Unlock Free Video Instantly →
+                </button>
+              )}
+              
+              {emailCaptured && (
+                <button 
+                  onClick={handleVideoClick}
+                  className="w-full mt-4 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold text-lg md:text-xl py-4 md:py-5 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+                >
+                  ▶️ Watch Free Presentation Now →
+                </button>
+              )}
             </div>
 
             {/* Trust Indicators */}
             <div className="flex flex-wrap justify-center items-center gap-3 md:gap-6 text-xs md:text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <span className="text-green-500">✓</span>
-                <span>No Diet Changes Required</span>
+                <span>No Stimulants</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-green-500">✓</span>
-                <span>Works for Women 45-75</span>
+                <span>All-Natural Ingredients</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-green-500">✓</span>
-                <span>Science-Based Approach</span>
+                <span>90-Day Guarantee</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-green-500">✓</span>
-                <span>See Results in 48 Hours</span>
+                <span>Made in USA</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* PAIN POINTS SECTION - Mobile optimized */}
+        {/* PROBLEM/SOLUTION SECTION */}
         <section className="py-8 md:py-16 bg-white">
           <div className="max-w-4xl mx-auto px-4">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8 md:mb-12 text-gray-900">
               Does This Sound Like You?
             </h2>
             
-            <div className="space-y-3 md:space-y-4">
-              {[
-                "You've tried every diet but your body refuses to lose weight like it used to",
-                "You wake up exhausted no matter how much sleep you get",
-                "Your metabolism feels 'broken' - you gain weight just looking at food",
-                "That 2pm energy crash hits you like a truck every single day",
-                "You feel bloated and uncomfortable even when eating healthy",
-                "Exercise barely makes a dent anymore - if you even have energy for it",
-                "You've accepted that 'this is just part of getting older' (it's NOT!)"
-              ].map((pain, index) => (
-                <div key={index} className="flex items-start gap-4 p-3 md:p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                  <span className="text-red-500 text-xl flex-shrink-0">😔</span>
-                  <p className="text-gray-800 text-sm md:text-lg">{pain}</p>
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="space-y-4">
+                {[
+                  "You've tried every diet but your body refuses to lose weight like it used to",
+                  "You wake up exhausted no matter how much sleep you get",
+                  "Your metabolism feels 'broken' - you gain weight just looking at food",
+                  "That 2pm energy crash hits you like a truck every single day"
+                ].map((pain, index) => (
+                  <div key={index} className="flex items-start gap-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                    <span className="text-red-500 text-xl flex-shrink-0">😔</span>
+                    <p className="text-gray-800 text-sm md:text-base">{pain}</p>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl p-6 md:p-8 flex flex-col justify-center">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+                  The REAL Reason This Happens
+                </h3>
+                <p className="text-gray-700 mb-4">
+                  As we age, our mitochondria (the powerhouses of our cells) become less efficient. This leads to:
+                </p>
+                <ul className="space-y-2 text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <span>Slower metabolism and weight gain</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <span>Chronic fatigue and energy crashes</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <span>Difficulty losing stubborn fat</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <button 
+                onClick={handleCTAClick}
+                className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-lg px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-xl"
+              >
+                See How Mitolyn Can Help →
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* HOW IT WORKS SECTION */}
+        <section className="py-8 md:py-16 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8 md:mb-12 text-gray-900">
+              How Mitolyn Works at the Cellular Level
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838L12.75 7.95a.999.999 0 01-.356.257l-4 1.714a1 1 0 01-.788-1.838L12.333 7.912l-1.94-.831a1 1 0 00-.787 0z" />
+                  </svg>
                 </div>
-              ))}
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Step 1</h3>
+                <p className="text-gray-700">
+                  Mitolyn delivers powerful antioxidants and nutrients directly to your mitochondria
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v8h8a1 1 0 01.707 1.707l-8.586 8.586A1 1 0 013 18.586V11H2a1 1 0 01-1-1V3a1 1 0 011.046-.954l9.254-9.254z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Step 2</h3>
+                <p className="text-gray-700">
+                  It enhances ATP production, your body's true energy currency
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 100 4h2a2 2 0 100-4h-.5a1 1 0 000-2H8a2 2 0 012-2h4a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Step 3</h3>
+                <p className="text-gray-700">
+                  Your metabolism naturally accelerates, burning fat more efficiently
+                </p>
+              </div>
             </div>
 
-            <div className="mt-6 md:mt-8 p-4 md:p-6 bg-green-50 rounded-xl border-2 border-green-300">
-              <p className="text-center text-base md:text-lg text-gray-800">
-                <span className="font-bold text-green-700">GOOD NEWS:</span> A Harvard medical researcher discovered these symptoms all have the 
-                <span className="font-semibold"> SAME hidden cause</span> - and it's NOT your fault...
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">The Science Behind It</h3>
+              <p className="text-gray-700 mb-4">
+                Unlike traditional fat burners that rely on stimulants, Mitolyn works at the cellular level to optimize mitochondrial function. This approach provides:
               </p>
+              <ul className="space-y-2 text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">✓</span>
+                  <span>Sustained energy without crashes</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">✓</span>
+                  <span>Enhanced fat metabolism</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">✓</span>
+                  <span>Improved mental clarity</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">✓</span>
+                  <span>Long-term metabolic health</span>
+                </li>
+              </ul>
             </div>
           </div>
         </section>
 
-        {/* CTA SECTION - Mid Page - Mobile optimized */}
-        <section className="py-6 md:py-8 bg-gradient-to-r from-green-50 to-blue-50">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-            <h3 className="text-xl md:text-2xl font-bold mb-4">Ready to Discover the Truth?</h3>
-            <button 
-              onClick={handleCTAClick}
-              className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold text-base md:text-lg px-8 md:px-12 py-3 md:py-4 rounded-lg transition-all transform hover:scale-105 shadow-xl"
-            >
-              🔓 Unlock Video Access →
-            </button>
-            <p className="text-xs md:text-sm text-gray-600 mt-3">One-time email required • No spam ever</p>
+        {/* INGREDIENTS SECTION */}
+        <section className="py-8 md:py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8 md:mb-12 text-gray-900">
+              Clinically-Backed Ingredients
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-gray-50 rounded-xl p-6">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Maqui Berry</h3>
+                <p className="text-gray-700 mb-4">
+                  A potent antioxidant-rich superfruit that reduces oxidative stress and improves insulin sensitivity. Studies show it enhances mitochondrial function.
+                </p>
+                <div className="text-sm text-gray-600">
+                  <span className="font-semibold">Key Benefit:</span> Supports fat metabolism
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 rounded-xl p-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 102 0V6h1a1 1 0 110-2H6V3a1 1 0 00-1-1zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Rhodiola</h3>
+                <p className="text-gray-700 mb-4">
+                  A powerful adaptogen that reduces fatigue, improves endurance, and regulates cortisol levels. Helps stabilize metabolic health.
+                </p>
+                <div className="text-sm text-gray-600">
+                  <span className="font-semibold">Key Benefit:</span> Reduces stress-related weight gain
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 rounded-xl p-6">
+                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 100 4h2a2 2 0 100-4h-.5a1 1 0 000-2H8a2 2 0 012-2h4a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Haematococcus</h3>
+                <p className="text-gray-700 mb-4">
+                  A natural source of astaxanthin, one of the most powerful antioxidants known to science. Protects mitochondria from oxidative damage.
+                </p>
+                <div className="text-sm text-gray-600">
+                  <span className="font-semibold">Key Benefit:</span> Preserves mitochondrial efficiency
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* TESTIMONIALS SECTION - Mobile optimized */}
+        {/* TESTIMONIALS SECTION */}
         <section className="py-8 md:py-16 bg-gray-50">
           <div className="max-w-5xl mx-auto px-4">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-4 text-gray-900">
-              47,392 Women Are Already Transforming Their Lives
+              Real Results From Real People
             </h2>
             <p className="text-center text-gray-600 mb-8 md:mb-12 text-base md:text-lg">
-              Real results from real women - all verified purchasers
+              Over 47,392 women are already transforming their lives with Mitolyn
             </p>
             
             <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-              {/* Testimonials - Same as before */}
-              {[
-                {
-                  initials: "JM",
-                  name: "Jennifer Mitchell",
-                  location: "Austin, TX • Age 52",
-                  result: "Lost 43 lbs in 12 weeks",
-                  quote: "I cried when I stepped on the scale this morning. 43 pounds GONE! I haven't weighed this since my 30s. The crazy part? I'm eating MORE than before. My energy is through the roof!"
-                },
-                {
-                  initials: "SK",
-                  name: "Sarah Kingston",
-                  location: "Phoenix, AZ • Age 48",
-                  result: "Lost 31 lbs in 8 weeks",
-                  quote: "The 2pm crashes are GONE. Completely gone! I used to need 3 cups of coffee just to survive the afternoon. Now I have energy all day. My doctor was shocked!"
-                },
-                {
-                  initials: "LR",
-                  name: "Linda Rodriguez",
-                  location: "Denver, CO • Age 56",
-                  result: "Lost 37 lbs in 10 weeks",
-                  quote: "My blood pressure is normal for the first time in 10 years! My doctor reduced my medications. I've lost 37 pounds and 5 dress sizes. This saved my health!"
-                },
-                {
-                  initials: "PT",
-                  name: "Patricia Thompson",
-                  location: "Seattle, WA • Age 61",
-                  result: "Lost 52 lbs in 14 weeks",
-                  quote: "I thought weight loss after 60 was impossible. I was WRONG! 52 pounds gone and I feel 30 years younger. My grandkids can't keep up with me now!"
-                }
-              ].map((testimonial, index) => (
+              {testimonials.map((testimonial, index) => (
                 <div key={index} className="bg-white rounded-xl shadow-lg p-4 md:p-6 border-t-4 border-green-500">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-xl md:text-2xl font-bold">
-                      {testimonial.initials}
-                    </div>
+                    <img 
+                      src={testimonial.image} 
+                      alt={testimonial.name}
+                      className="w-12 h-12 md:w-16 md:h-16 rounded-full object-cover"
+                    />
                     <div>
                       <p className="font-bold text-gray-900 text-sm md:text-base">{testimonial.name}</p>
-                      <p className="text-xs md:text-sm text-gray-600">{testimonial.location}</p>
+                      <p className="text-xs md:text-sm text-gray-600">{testimonial.location} • Age {testimonial.age}</p>
                       <div className="flex text-yellow-400 text-sm md:text-base">★★★★★</div>
                     </div>
                   </div>
@@ -722,17 +975,125 @@ export default function MitolynBridgePage() {
           </div>
         </section>
 
-        {/* FINAL CTA SECTION - Mobile optimized */}
+        {/* PRICING SECTION */}
+        <section id="pricing" className="py-8 md:py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-4 text-gray-900">
+              Choose Your Package
+            </h2>
+            <p className="text-center text-gray-600 mb-8 md:mb-12 text-base md:text-lg">
+              Select the package that best fits your weight loss journey
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+              {packages.map((pkg) => (
+                <div 
+                  key={pkg.id} 
+                  className={`relative bg-white rounded-xl shadow-lg p-6 border-2 ${
+                    selectedPackage === pkg.id ? 'border-green-500' : 'border-gray-200'
+                  } ${pkg.popular ? 'md:scale-105' : ''}`}
+                >
+                  {pkg.popular && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                        MOST POPULAR
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <span className="text-3xl font-bold text-gray-900">${pkg.price}</span>
+                      <span className="text-lg text-gray-500 line-through">${pkg.originalPrice}</span>
+                    </div>
+                    <p className="text-green-600 font-semibold">Save ${pkg.savings}</p>
+                  </div>
+                  
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-500 mt-1">✓</span>
+                      <span className="text-sm text-gray-700">{pkg.bottles} bottle{pkg.bottles > 1 ? 's' : ''} of Mitolyn</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-500 mt-1">✓</span>
+                      <span className="text-sm text-gray-700">{pkg.shipping}</span>
+                    </li>
+                    {pkg.bonus && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-green-500 mt-1">✓</span>
+                        <span className="text-sm text-gray-700">2 FREE bonus eBooks</span>
+                      </li>
+                    )}
+                  </ul>
+                  
+                  <button
+                    onClick={() => handlePackageSelect(pkg.id)}
+                    className={`w-full py-3 rounded-lg font-bold transition-all transform hover:scale-105 ${
+                      selectedPackage === pkg.id 
+                        ? 'bg-green-600 hover:bg-green-700 text-white' 
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                    }`}
+                  >
+                    {selectedPackage === pkg.id ? 'SELECTED' : 'SELECT'}
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center">
+              <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-semibold">
+                <span>⚠️</span>
+                <span>Limited Time Offer: {spotsLeft} spots remaining</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ SECTION */}
+        <section className="py-8 md:py-16 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-8 md:mb-12 text-gray-900">
+              Frequently Asked Questions
+            </h2>
+            
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-md overflow-hidden">
+                  <button
+                    onClick={() => setShowFAQ(showFAQ === index ? -1 : index)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform ${showFAQ === index ? 'rotate-180' : ''}`} 
+                      fill="currentColor" 
+                      viewBox="0 0 20 20"
+                    >
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  {showFAQ === index && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-700">{faq.answer}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FINAL CTA SECTION */}
         <section className="py-8 md:py-16 bg-gradient-to-br from-green-50 to-blue-50">
           <div className="max-w-4xl mx-auto px-4">
             <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 lg:p-12">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-4 md:mb-6 text-gray-900">
-                Your Transformation Starts In The Next 2 Minutes
+                Your Transformation Starts Today
               </h2>
               
               <p className="text-center text-base md:text-lg text-gray-700 mb-6 md:mb-8">
-                Watch the short free video that explains everything - including the exact 7-second ritual 
-                that's helping thousands of women finally lose weight after 45
+                Join thousands of women who have already transformed their bodies with Mitolyn
               </p>
 
               {/* Urgency Box */}
@@ -751,35 +1112,28 @@ export default function MitolynBridgePage() {
               {/* Main CTA Button */}
               <button
                 onClick={handleCTAClick}
-                className="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold text-lg md:text-2xl py-4 md:py-6 rounded-lg transition-all transform hover:scale-105 shadow-2xl animate-pulse"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold text-lg md:text-2xl py-4 md:py-6 rounded-lg transition-all transform hover:scale-105 shadow-2xl animate-pulse"
               >
-                🔓 Unlock Access to Free Video →
+                Get Mitolyn Now →
               </button>
-
-              {/* Status Message */}
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-300 rounded-lg">
-                <p className="text-center text-yellow-700 text-sm">
-                  🔒 Enter your email above to unlock instant access
-                </p>
-              </div>
 
               {/* Trust Badges */}
               <div className="mt-6 md:mt-8 flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm text-gray-600">
                 <span className="flex items-center gap-1">
-                  <span className="text-green-500">✓</span> No Credit Card Required
+                  <span className="text-green-500">✓</span> 90-Day Money Back Guarantee
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="text-green-500">✓</span> Watch Instantly
+                  <span className="text-green-500">✓</span> FDA Registered Facility
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="text-green-500">✓</span> 100% Free Video
+                  <span className="text-green-500">✓</span> Made in USA
                 </span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Footer - Mobile optimized */}
+        {/* Footer */}
         <footer className="py-6 md:py-8 bg-white border-t">
           <div className="max-w-4xl mx-auto px-4 text-center text-xs text-gray-500 space-y-2">
             <p>
@@ -787,13 +1141,12 @@ export default function MitolynBridgePage() {
             </p>
             <p>© 2024 MITOLYN. All Rights Reserved.</p>
             
-            {/* Footer Links */}
             <div className="text-center text-xs text-gray-500 space-y-3 pt-4 md:pt-6">
-              <p>🔒 Secure sign-in with Google</p>
+              <p>🔒 Secure checkout</p>
               <p>✉️ By continuing, you agree to receive wellness updates. Unsubscribe anytime.</p>
               <p className="flex justify-center gap-4 md:gap-6">
                 <a href="/privacy" className="underline hover:text-teal-600">Privacy Policy</a>
-                <a href="/disclaimer" className="underline hover:text-teal-600">Affiliate Disclaimer</a>
+                <a href="/disclaimer" className="underline hover:text-teal-600">Disclaimer</a>
               </p>
             </div>
           </div>
