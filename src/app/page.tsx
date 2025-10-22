@@ -907,7 +907,7 @@ export default function MitolynBridgePage() {
             <div className="grid md:grid-cols-3 gap-4 mb-8">
               <div className="glass gradient-border rounded-lg p-4 text-center">
                 <h3 className="font-bold text-white/90 mb-2">1 Bottle</h3>
-                <p className="text-3xl font-bold text-white">$77</p>
+                <p className="text-3xl font-bold text-white">$59</p>
                 <p className="text-sm text-white/70">per bottle</p>
                 <p className="text-sm text-white/60 mt-2">30-day supply</p>
               </div>
@@ -916,19 +916,19 @@ export default function MitolynBridgePage() {
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                   MOST POPULAR
                 </span>
-                <h3 className="font-bold text-white/90 mb-2">6 Bottles</h3>
-                <p className="text-3xl font-bold text-emerald-300">$294</p>
+                <h3 className="font-bold text-white/90 mb-2">3 Bottles</h3>
+                <p className="text-3xl font-bold text-emerald-300">$49</p>
                 <p className="text-sm text-white/70">per bottle</p>
                 <p className="text-sm text-white/60 mt-2">90-day supply</p>
-                <p className="text-xs text-emerald-300 font-semibold mt-1">Save $217!</p>
+                <p className="text-xs text-emerald-300 font-semibold mt-1">Save $30!</p>
               </div>
 
               <div className="glass gradient-border rounded-lg p-4 text-center">
-                <h3 className="font-bold text-white/90 mb-2">3 Bottles</h3>
-                <p className="text-3xl font-bold text-sky-300">$177</p>
+                <h3 className="font-bold text-white/90 mb-2">6 Bottles</h3>
+                <p className="text-3xl font-bold text-sky-300">$39</p>
                 <p className="text-sm text-white/70">per bottle</p>
                 <p className="text-sm text-white/60 mt-2">180-day supply</p>
-                <p className="text-xs text-sky-300 font-semibold mt-1">Save $100!</p>
+                <p className="text-xs text-sky-300 font-semibold mt-1">Save $120!</p>
               </div>
             </div>
 
