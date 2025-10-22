@@ -1,7 +1,11 @@
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-'use client';
+import MitolynBridgePageClient from './MitolynBridgePageClient';
+
+export default function Page() {
+  return <MitolynBridgePageClient />;
+}
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
