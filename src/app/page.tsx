@@ -26,7 +26,7 @@ export default function MitolynLandingPage() {
       result: "Lost 43 lbs in 12 weeks",
       quote: "I cried when I stepped on the scale this morning. 43 pounds GONE! I haven't weighed this since my 30s. The crazy part? I'm eating MORE than before. My energy is through the roof!",
       rating: 5,
-      image: "https://scontent.fbho5-1.fna.fbcdn.net/o1/v/t0/f2/m340/AQOR2JvVizUhZlCuNO-Vzv5urWRq7e3PpDJn_OgQRDYKP-WPrHCqWvbFMVs9Qyd-e7VmsTEG_N4NVI_tLEfwLzoEkSRmj0SQFQRUUmw6pLD5S1_azPxFK1XMH-5_P_4-Xc5ix2IsWjumozoIj1FTTSzDYMW4lw.png?_nc_ht=scontent.fbho5-1.fna.fbcdn.net&_nc_gid=KQ9Q_MHoEzh3m4EhpQWgAw&_nc_cat=100&_nc_oc=AdlczNk4JaW12G8RDwU_beQu78Eo-13aJRivge8V5-EXRMY3slYQPu8W0iMYmQATR8vo5ALEYNGlrSfN1afP7B_J&ccb=9-4&oh=00_Afd_cwcc2OWaC08ga34Zi1v2hXVOGsVx2e0xyUIeN80Oxg&oe=68FA3AC7&_nc_sid=5b3566"
+      image: "https://picsum.photos/seed/jennifer/100/100.jpg"
     },
     {
       name: "Sarah K.",
@@ -35,7 +35,7 @@ export default function MitolynLandingPage() {
       result: "Lost 31 lbs in 8 weeks",
       quote: "The 2pm crashes are GONE. Completely gone! I used to need 3 cups of coffee just to survive the afternoon. Now I have energy all day. My doctor was shocked!",
       rating: 5,
-      image: "https://scontent.fbho5-1.fna.fbcdn.net/v/t39.30808-6/567590724_805671922637373_8743488634365345067_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=e1afaa&_nc_ohc=sHHxH1_sd4EQ7kNvwGiyUJd&_nc_oc=AdkahVtGPJ8HRY4oDVQ5ppZws2Ii0587f1XqxJQbGVZ_7tmNl9pyamRv5ZPBeZQcZjMlUGAT6myvqzHoYWej5lP5&_nc_zt=23&_nc_ht=scontent.fbho5-1.fna&_nc_gid=6cw7l1DjClAdQdWILmdU8A&oh=00_AfcaSWwGgFRqOLDYpNEaoihsHfaDxh1vridTPP4XITrqsw&oe=68FE5B98"
+      image: "https://picsum.photos/seed/sarah/100/100.jpg"
     },
     {
       name: "Linda R.",
@@ -44,7 +44,7 @@ export default function MitolynLandingPage() {
       result: "Lost 37 lbs in 10 weeks",
       quote: "My blood pressure is normal for the first time in 10 years! My doctor reduced my medications. I've lost 37 pounds and 5 dress sizes. This saved my health!",
       rating: 5,
-      image: "https://scontent.fbho5-1.fna.fbcdn.net/v/t39.30808-6/566248172_805673882637177_7826166945754350851_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=e1afaa&_nc_ohc=X8UDnt1G5gIQ7kNvwHZQ2kn&_nc_oc=AdmEWwQGOIEDqmjF19ICio6n5ePvvtvBgQqn-4Sa195Xls_fIiYydQ2NP9MT1bRqSOTmU9oYDQfkP6wr_xCN1HVm&_nc_zt=23&_nc_ht=scontent.fbho5-1.fna&_nc_gid=1c8OTl4z_EZvJ0gzuBA3-A&oh=00_AfdXhKRv0nUB8LsIsAfly_lWsbGHszM89jvF2SXue8x3Fw&oe=68FE378B"
+      image: "https://picsum.photos/seed/linda/100/100.jpg"
     },
     {
       name: "Patricia T.",
@@ -53,7 +53,7 @@ export default function MitolynLandingPage() {
       result: "Lost 52 lbs in 14 weeks",
       quote: "I thought weight loss after 60 was impossible. I was WRONG! 52 pounds gone and I feel 30 years younger. My grandkids can't keep up with me now!",
       rating: 5,
-      image: "https://scontent.fbho5-1.fna.fbcdn.net/v/t39.30808-6/565679893_805673889303843_1636475946485239826_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=e1afaa&_nc_ohc=WzwfBrW19GoQ7kNvwGbG4QT&_nc_oc=AdnoYfEBdOr9Gmk1OvSx03j_OzfzGQ2wHh0fy07u41Zq_xPdUecyut9bvDrj8hofcoq1_dXoP9YPrEAD8jhcz9Mh&_nc_zt=23&_nc_ht=scontent.fbho5-1.fna&_nc_gid=9Tb7NLcu0-jAS-M2388IlA&oh=00_Afe-eYrMPkySpm2uGkoGfJZtrVjs3VRQQpTWTsPB6TTf6Q&oe=68FE2FF7"
+      image: "https://picsum.photos/seed/patricia/100/100.jpg"
     }
   ];
 
@@ -117,62 +117,6 @@ export default function MitolynLandingPage() {
       answer: "Mitolyn comes with a 90-day money-back guarantee. If you're not completely satisfied with your results, simply return the product (even empty bottles) for a full refund, no questions asked."
     }
   ];
-
-  // Handle package selection
-  const handlePackageSelect = (packageId: string) => {
-    setSelectedPackage(packageId);
-  };
-
-  // Handle email submission
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email) {
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Save to Supabase
-      const { error } = await supabase.from('leads').insert([{
-        email: email.toLowerCase(),
-        source: 'landing_page',
-        campaign: 'mitolyn',
-        package: selectedPackage,
-        page_url: window.location.href,
-        user_agent: navigator.userAgent,
-      }]);
-
-      if (error && error.code !== '23505') {
-        console.error('Supabase error:', error);
-      }
-      
-      // Track with pixels
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'Lead', { value: email });
-      }
-      
-      // Show success modal
-      setShowSuccessModal(true);
-      
-      // Redirect after showing success modal
-      setTimeout(() => {
-        setShowSuccessModal(false);
-        window.location.href = AFFILIATE_URL;
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Handle direct CTA click
-  const handleDirectCTA = () => {
-    window.location.href = AFFILIATE_URL;
-  };
 
   // Inject custom styles only on client side
   useEffect(() => {
@@ -304,6 +248,62 @@ export default function MitolynLandingPage() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Handle email submission
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Save to Supabase
+      const { error } = await supabase.from('leads').insert([{
+        email: email.toLowerCase(),
+        source: 'landing_page',
+        campaign: 'mitolyn',
+        package: selectedPackage,
+        page_url: window.location.href,
+        user_agent: navigator.userAgent,
+      }]);
+
+      if (error && error.code !== '23505') {
+        console.error('Supabase error:', error);
+      }
+      
+      // Track with pixels
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Lead', { value: email });
+      }
+      
+      // Show success modal
+      setShowSuccessModal(true);
+      
+      // Redirect after showing success modal
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        window.location.href = AFFILIATE_URL;
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle package selection
+  const handlePackageSelect = (packageId: string) => {
+    setSelectedPackage(packageId);
+  };
+
+  // Handle direct CTA click
+  const handleDirectCTA = () => {
+    window.location.href = AFFILIATE_URL;
   };
 
   return (
