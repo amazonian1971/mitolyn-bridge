@@ -3,9 +3,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-type UTM = Record<string, string>;
-type GateStep = 1 | 2;
-
 // Magnetic Button (built-in)
 function MagneticButton({
   children,
