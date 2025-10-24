@@ -3,6 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
+type UTM = Record<string, string>;
+type GateStep = 1 | 2;
+
 // Magnetic Button (built-in)
 function MagneticButton({
   children,
@@ -317,8 +320,8 @@ export default function MitolynBridgePage() {
 
   const headline =
     variant === 'A'
-      ? 'Scientists Found a “Cellular Energy Switch” that Reboots Fat‑Burning After 40'
-      : 'Harvard‑Backed “Cellular Energy Switch” Helping Women 40+ Reboot Metabolism Fast';
+      ? 'Scientists Found a "Cellular Energy Switch" that Reboots Fat‑Burning After 40'
+      : 'Harvard‑Backed "Cellular Energy Switch" Helping Women 40+ Reboot Metabolism Fast';
 
   const ctaText = variant === 'A' ? '🔓 Watch Free Scientific Presentation →' : '👉 Unlock the Free Video Now';
 
@@ -649,7 +652,7 @@ export default function MitolynBridgePage() {
             </h1>
 
             <p className="reveal in text-center text-white/80 text-lg md:text-2xl max-w-3xl mx-auto mb-10">
-              97% of women over 45 experience mitochondrial slowdown. The good news? It’s reversible — learn how in this free presentation.
+              97% of women over 45 experience mitochondrial slowdown. The good news? It's reversible — learn how in this free presentation.
             </p>
 
             <div className="reveal in max-w-4xl mx-auto">
@@ -732,10 +735,10 @@ export default function MitolynBridgePage() {
                 "You've tried every diet but your metabolism keeps getting slower",
                 'You experience afternoon energy crashes no matter how much coffee you drink',
                 'Your body stores fat easier than ever, especially around your midsection',
-                "You feel exhausted even after a full night’s sleep",
+                "You feel exhausted even after a full night's sleep",
                 'Exercise barely makes a dent in weight loss anymore',
-                'You’ve noticed increased brain fog and difficulty concentrating',
-                "Your doctor says 'everything is normal' but you know something’s wrong",
+                'You've noticed increased brain fog and difficulty concentrating',
+                "Your doctor says 'everything is normal' but you know something's wrong",
               ].map((pain, idx) => (
                 <div key={idx} className="reveal glass gradient-border rounded-xl p-4 border-l-4 border-rose-400">
                   <div className="flex items-start gap-3">
@@ -748,7 +751,7 @@ export default function MitolynBridgePage() {
             <div className="mt-8 p-5 glass gradient-border rounded-xl">
               <p className="text-center text-white/90">
                 <span className="font-bold text-emerald-300">GOOD NEWS:</span> Harvard research shows these symptoms stem from
-                <span className="font-semibold"> declining mitochondrial function</span> — and it’s reversible...
+                <span className="font-semibold"> declining mitochondrial function</span> — and it's reversible...
               </p>
             </div>
           </div>
