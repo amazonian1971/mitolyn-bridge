@@ -1,28 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-// Replace these with your actual Supabase credentials
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
+// It's best practice to validate environment variables on startup.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-// Types for your leads table
-export interface Lead {
-  id?: string
-  email: string
-  source?: string
-  campaign?: string
-  utm_source?: string
-  utm_medium?: string
-  utm_campaign?: string
-  utm_content?: string
-  utm_term?: string
-  ip_address?: string
-  user_agent?: string
-  page_url?: string
-  referrer?: string
-  converted?: boolean
-  conversion_date?: string
-  created_at?: string
-  updated_at?: string
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.'
+  );
 }
+
+// Create and export the Supabase client instance.
+// This will now only be created if the environment variables are present.
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
