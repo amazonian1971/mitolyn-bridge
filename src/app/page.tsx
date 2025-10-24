@@ -737,7 +737,7 @@ export default function MitolynBridgePage() {
                 'Your body stores fat easier than ever, especially around your midsection',
                 "You feel exhausted even after a full night's sleep",
                 'Exercise barely makes a dent in weight loss anymore',
-                'You\'ve noticed increased brain fog and difficulty concentrating',
+                "You've noticed increased brain fog and difficulty concentrating",
                 "Your doctor says 'everything is normal' but you know something's wrong",
               ].map((pain, idx) => (
                 <div key={idx} className="reveal glass gradient-border rounded-xl p-4 border-l-4 border-rose-400">
